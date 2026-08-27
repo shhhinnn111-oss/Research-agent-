@@ -10,6 +10,7 @@ Formatting contract enforced here:
     so numbers update automatically and restart correctly under each parent.
 """
 
+import re
 from pathlib import Path
 
 from docx import Document
@@ -1300,9 +1301,44 @@ def build(out_path: Path):
             continue
         add_para(doc, payload, style=style_map.get(kind))
 
+    cp = doc.core_properties
+    cp.title = ("Research Theme for PhD Thesis: Chinese Governance System, Decision-Making, "
+                "State Capacity, Strategic Governance and Lessons for Pakistan")
+    cp.subject = "PhD thesis theme statement and pre-synopsis framework"
+    cp.keywords = ("strategic governance; state capacity; China governance system; five-year planning; "
+                   "policy transfer; Pakistan administrative reform; comparative public administration")
+    cp.category = "Doctoral thesis theme / synopsis framework"
+    cp.comments = ("Arial 14 pt black throughout; one Word multilevel list, levels 1. / a. / (1) / "
+                   "(a). Regenerate with build_thesis_theme_docx.py. Facts and citations are research "
+                   "leads as at Aug 2026 - verify against primary sources.")
+    cp.last_modified_by = "Arena Agent"
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(out_path))
+    strip_template_thumbnail(out_path)
     return out_path
+
+
+def strip_template_thumbnail(path):
+    """The python-docx base template ships a Word-screenshot thumbnail; drop it so file
+    explorers do not preview someone else's document."""
+    import os
+    import zipfile
+
+    tmp = Path(str(path) + ".tmp")
+    with zipfile.ZipFile(path) as src, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as dst:
+        for item in src.infolist():
+            if item.filename == "docProps/thumbnail.jpeg":
+                continue
+            data = src.read(item.filename)
+            if item.filename == "[Content_Types].xml":
+                data = data.replace(
+                    b'<Override PartName="/docProps/thumbnail.jpeg" '
+                    b'ContentType="image/jpeg"/>', b"")
+            elif item.filename == "_rels/.rels":
+                data = re.sub(rb'<Relationship[^>]*docProps/thumbnail\.jpeg"[^>]*/>', b"", data)
+            dst.writestr(item, data)
+    os.replace(tmp, path)
 
 
 if __name__ == "__main__":
