@@ -182,8 +182,9 @@ Session date: October 2026. Data verified via web sources as cited.
 - Deradicalization programme claims (2,200 vs 400; 99% success claims) reported as contested.
 
 ## Q. DELIVERABLES (built)
-- research/deliverables/KPK_Security_Normalization_Monograph.pdf (+ .docx) — 121 pp, 16 chapters + back matter, 5 figures, auto-TOC, page furniture.
-- research/deliverables/KPK_Security_Executive_Summary.pdf (+ .docx) — 3–4 pp.
-- research/deliverables/KPK_Security_Policy_Brief.pdf (+ .docx) — 8 pp, 14 sections incl. district prioritisation and monitoring set.
+- research/deliverables/KPK_Security_Normalization_Monograph.pdf (+ .docx) — 120 pp, 16 chapters + back matter, 5 figures, auto-TOC, page furniture.
+- research/deliverables/KPK_Security_Executive_Summary.pdf (+ .docx) — 4 pp.
+- research/deliverables/KPK_Security_Policy_Brief.pdf (+ .docx) — 8 pp, decision-maker brief incl. district prioritisation and monitoring set.
+- research/deliverables/KPK_Security_Recommendations_Infographics.pdf — 25-page A4 landscape vector pack visualising all 46 recommendations, phases, six workstreams, costs, responsibilities, KPIs, safeguards and district-tier caveat.
 - research/deliverables/figures/*.png — five figures (matplotlib, source-attributed captions).
-- Renderer: render_study.py (markdown → PDF/DOCX; run with /tmp/pdfenv/bin/python; venv must be recreated each session).
+- Renderers: render_study.py (monograph/summary/brief) and build_infographics.py (recommendations atlas; parses the statistical-annex matrix directly). Run with /tmp/pdfenv/bin/python; venv must be recreated each session.
