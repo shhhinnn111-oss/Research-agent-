@@ -375,7 +375,8 @@ def build_pdf(md_files, out_pdf, cover_title, cover_subtitle, cover_note,
                 lens = []
                 for ci in range(ncols):
                     cl = max(len(rows[ri][ci]) for ri in range(min(len(rows), 12)))
-                    lens.append(max(cl, 6))
+                    # soften extreme ratios so short header columns stay legible
+                    lens.append(max(cl, 6) ** 0.65)
                 total = sum(lens)
                 avail = A4[0] - 40 * mm
                 widths = [max(avail * l / total, 14 * mm) for l in lens]
