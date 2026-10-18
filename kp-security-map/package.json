@@ -1,0 +1,16 @@
+{
+  "name": "kp-security-map",
+  "version": "1.0.0",
+  "description": "Interactive atlas of terrorism-related incidents in Khyber Pakhtunkhwa, 2004-2026",
+  "main": "index.js",
+  "scripts": {
+    "serve": "python3 -m http.server 8080"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0"
+  }
+}

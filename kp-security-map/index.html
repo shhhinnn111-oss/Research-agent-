@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khyber Pakhtunkhwa Security Atlas · SATP live</title>
+<meta name="description" content="A live, year-by-year visual history of terrorism in Khyber Pakhtunkhwa, built on the South Asia Terrorism Portal datasheets and mapped across all 35 districts.">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40"><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.5 20.2l5 5L28 14.8" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+    </div>
+    <div class="brand-text">
+      <span class="eyebrow">South Asia Terrorism Portal · live data</span>
+      <h1>Khyber Pakhtunkhwa Security Atlas</h1>
+    </div>
+  </div>
+
+  <div class="headline" id="headline">
+    <div class="hs"><span class="hs-num" id="hsIncidents">—</span><span class="hs-lab" id="hsIncidentsLab">incidents</span></div>
+    <div class="hs"><span class="hs-num" id="hsKilled">—</span><span class="hs-lab">killed</span></div>
+    <div class="hs"><span class="hs-num" id="hsCiv">—</span><span class="hs-lab">civilians</span></div>
+    <div class="hs"><span class="hs-num" id="hsSec">—</span><span class="hs-lab">security forces</span></div>
+    <div class="hs"><span class="hs-num" id="hsMil">—</span><span class="hs-lab">militants</span></div>
+  </div>
+
+  <div class="top-actions">
+    <button class="sync-chip" id="syncChip" type="button" title="Data status">
+      <i class="dot" id="syncDot"></i><span id="syncText">Loading…</span>
+    </button>
+    <button class="btn sync" id="btnSync" type="button">Sync SATP</button>
+    <button class="btn ghost" id="btnExport" type="button">CSV</button>
+    <button class="btn ghost icon-only" id="btnMobileRail" type="button" aria-label="Filters">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <button class="btn ghost icon-only" id="btnMobileInsp" type="button" aria-label="Details">
+      <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <button class="btn ghost" id="btnAbout" type="button">Method</button>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- ============================ LEFT RAIL ============================ -->
+  <aside class="rail" id="rail" aria-label="Controls">
+    <div class="rail-scroll">
+
+      <section class="block period">
+        <div class="block-head">
+          <h2>Period</h2>
+          <button class="link" id="btnAllYears" type="button" aria-pressed="true">All years</button>
+        </div>
+        <div class="year-display">
+          <button class="yr-step" id="yrPrev" type="button" aria-label="Previous year">‹</button>
+          <div class="yr-main"><span id="yearBig">2026</span><small id="yearSub">cumulative · 2000–2026</small></div>
+          <button class="yr-step" id="yrNext" type="button" aria-label="Next year">›</button>
+        </div>
+        <input type="range" id="yearRange" min="2000" max="2026" step="1" value="2026" aria-label="Year">
+        <div class="year-scale"><span>2000</span><span>2009 peak</span><span>2026</span></div>
+        <div class="row gap">
+          <button class="btn small" id="btnPlay" type="button">▶ Play years</button>
+          <button class="btn small ghost" id="btnLatest" type="button">Latest</button>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h2>Map overlays</h2><span class="hint" id="overlayCount">6 on</span></div>
+        <label class="check"><input type="checkbox" id="ovDistricts" checked><span class="sw sw-district"></span><span class="txt">District shading<small>SATP or GTD intensity</small></span></label>
+        <label class="check"><input type="checkbox" id="ovBorders" checked><span class="sw sw-border"></span><span class="txt">Boundaries &amp; labels<small>District names and values</small></span></label>
+        <label class="check"><input type="checkbox" id="ovFata" checked><span class="sw sw-fata"></span><span class="txt">Erstwhile FATA<small>Hatched, merged in 2018</small></span></label>
+        <label class="check"><input type="checkbox" id="ovPins" checked><span class="sw sw-pin"></span><span class="txt">Incident pins<small>GTD records, 2004–2020</small></span></label>
+        <label class="check"><input type="checkbox" id="ovHeat"><span class="sw sw-heat"></span><span class="txt">Density heat<small>Smoothed incident surface</small></span></label>
+        <label class="check"><input type="checkbox" id="ovNeighbours"><span class="sw sw-neigh"></span><span class="txt">Neighbouring regions<small>Afghanistan, Punjab, Sindh…</small></span></label>
+        <div class="select-row">
+          <label for="shadeMetric">Shade districts by</label>
+          <select id="shadeMetric" class="select">
+            <option value="satp_total">SATP fatalities</option>
+            <option value="satp_civ">SATP civilians killed</option>
+            <option value="satp_sf">SATP security forces killed</option>
+            <option value="satp_mil">SATP militants killed</option>
+            <option value="satp_inc">SATP incidents of killing</option>
+            <option value="gtd_n">GTD incidents</option>
+            <option value="gtd_k">GTD fatalities</option>
+          </select>
+        </div>
+        <div class="select-row">
+          <label for="basemap">Basemap</label>
+          <select id="basemap" class="select">
+            <option value="google">Google Maps · roadmap</option>
+            <option value="googleSat">Google Maps · satellite</option>
+            <option value="googleHybrid">Google Maps · hybrid</option>
+            <option value="googleTerrain">Google Maps · terrain</option>
+            <option value="cartoLight">Light canvas (CARTO)</option>
+            <option value="cartoDark">Dark canvas (CARTO)</option>
+            <option value="osm">OpenStreetMap</option>
+            <option value="vector">Vector · offline</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h2>SATP series</h2><button class="link" id="btnAllSeries" type="button">All</button></div>
+        <p class="note">Show or hide each dataset in the charts, the year matrix and the timeline.</p>
+        <div id="seriesToggles" class="series-toggles"></div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h2>Incident categories</h2><button class="link" id="btnAllCats" type="button">All</button></div>
+        <p class="note">Filters the GTD incident pins only — the SATP datasheets publish totals, not per-attack categories.</p>
+        <div id="catToggles" class="cat-toggles"></div>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h2>Minimum fatalities</h2></div>
+        <div class="sev-row" id="sevRow" role="group" aria-label="Minimum fatalities">
+          <button data-min="0" class="active" type="button">Any</button>
+          <button data-min="1" type="button">1+</button>
+          <button data-min="3" type="button">3+</button>
+          <button data-min="10" type="button">10+</button>
+          <button data-min="25" type="button">25+</button>
+        </div>
+      </section>
+
+      <section class="block foot">
+        <p>Source: <a href="https://www.satp.org/datasheet-terrorist-attack/fatalities/pakistan-khyberpakhtunkhwa" target="_blank" rel="noopener">SATP Khyber Pakhtunkhwa datasheets</a>. Figures are provisional and compiled from news reports.</p>
+      </section>
+    </div>
+  </aside>
+
+  <!-- ============================ MAP COLUMN ============================ -->
+  <section class="mapcol" aria-label="Map">
+    <div class="legendbar" id="legendbar">
+      <span class="lg-title" id="lgTitle">SATP fatalities</span>
+      <div class="lg-classes" id="lgClasses"></div>
+      <span class="lg-note" id="lgNote">—</span>
+      <span class="lg-source" id="lgSource">SATP · 2000–2026</span>
+    </div>
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-tag" id="mapTag">SATP fatalities · cumulative</div>
+      <div class="map-scale-note" id="mapScaleNote"></div>
+      <div class="credit" id="credit">Basemap © Google</div>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-head">
+        <div class="tl-title">Yearly record <span id="tlRange">2000–2026</span></div>
+        <div class="tl-legend" id="tlLegend"></div>
+        <div class="tl-tools">
+          <label class="tiny-check"><input type="checkbox" id="tlLabels" checked> peaks</label>
+          <button class="btn tiny ghost" id="tlToggle" type="button" aria-expanded="true">Hide</button>
+        </div>
+      </div>
+      <div class="tl-chart" id="tlChart"></div>
+    </div>
+  </section>
+
+  <!-- ============================ INSPECTOR ============================ -->
+  <aside class="inspector" id="inspector" aria-label="Detail panel">
+    <div class="insp-head">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="year" role="tab" type="button">Year</button>
+        <button class="tab" data-tab="district" role="tab" type="button">District</button>
+        <button class="tab" data-tab="incidents" role="tab" type="button">Incidents</button>
+        <button class="tab" data-tab="sources" role="tab" type="button">Sources</button>
+      </div>
+      <button class="btn tiny ghost icon-only" id="btnCloseInsp" type="button" aria-label="Close panel">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="insp-body" id="inspBody"></div>
+  </aside>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" hidden></div>
+
+<!-- ============================ METHOD MODAL ============================ -->
+<div class="modal" id="aboutModal" hidden>
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="modal-head">
+      <h2 id="aboutTitle">Method &amp; sources</h2>
+      <button class="btn tiny ghost" data-close type="button">Close</button>
+    </div>
+    <div class="modal-body" id="aboutBody"></div>
+  </div>
+</div>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="vendor/leaflet/leaflet-heat.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

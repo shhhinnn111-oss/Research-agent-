@@ -1,0 +1,70 @@
+KHYBER PAKHTUNKHWA SECURITY ATLAS
+=================================
+
+WHAT THIS IS
+------------
+A year-by-year, district-by-district map of terrorism in Khyber Pakhtunkhwa,
+built on the South Asia Terrorism Portal's Khyber Pakhtunkhwa datasheets:
+10,104 terrorism-related incidents, 5,567 killing incidents, 24,878 people
+killed, 2000 to 14 October 2026.
+
+All 35 districts are drawn, including the seven erstwhile FATA agencies.
+
+
+TWO WAYS TO USE IT
+------------------
+
+1) ONE FILE, NO INSTALL  (recommended for sharing)
+   Open  kp-security-atlas-offline.html  by double-clicking it.
+   - No server, no internet, no software to install.
+   - Everything works: year slider, playback, SATP series toggles, district
+     shading, incident log, category filters, search, timeline, CSV export.
+   - The basemap is drawn in the browser (district outlines, province
+     boundary, neighbours, grid and labels) because tile imagery needs the
+     internet. It is selected automatically.
+   - Live sync is not available in this edition; the header chip shows the
+     snapshot date it was built from.
+
+2) THE FULL APP, WITH GOOGLE MAPS TILES AND LIVE SYNC  (needs Python 3)
+   In this folder, in a terminal:
+
+       python3 serve.py
+
+   It opens http://127.0.0.1:8080. Keep the window open while you browse;
+   Ctrl+C closes it.
+
+   - Google roadmap / satellite / hybrid / terrain, CARTO, OpenStreetMap.
+   - The "Sync SATP" button re-downloads all nine datasheets plus the 32
+     per-district fatality sheets and updates the map in place.
+   - The snapshot refreshes itself in the background when it is over 12
+     hours old.
+
+   No Python? Any static server works (npx serve, nginx, GitHub Pages), but
+   the Sync button needs serve.py. Double-clicking index.html will NOT work:
+   browsers block the data files on file:// URLs.
+
+
+WHAT IS IN THIS FOLDER
+----------------------
+index.html, css/, js/     the application
+data/                     SATP snapshot, boundaries, district stats, incidents
+vendor/leaflet/           Leaflet 1.9.4 and Leaflet.heat (local copies)
+tools/satp_refresh.py     live synchroniser — parses the SATP tables
+tools/build_satp.py       rebuilds the snapshot from transcribed tables
+tools/build_offline.py    rebuilds the single-file edition
+serve.py                  local server + sync API
+pipeline/                 GTD ingest, joins, dedupe, QA
+README.md                 full documentation, sources, caveats
+
+Refresh by hand at any time:
+
+    python3 tools/satp_refresh.py
+
+
+READ THIS BEFORE QUOTING A NUMBER
+---------------------------------
+SATP compiles its figures from news reports and revises them. Every figure here
+is SATP's, not an estimate. Province totals and district totals come from
+different sheets, so they will not always add up exactly. The incident pins are
+a separate GTD layer and are never folded into the SATP toll. The snapshot date
+is printed in the header, in the Sources tab and in the legend.
