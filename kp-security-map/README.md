@@ -9,6 +9,11 @@ No build step, no API keys, no database. Plain HTML, CSS, JavaScript and Leaflet
 one JSON snapshot, and a 160-line Python server that can re-download the source
 tables on demand.
 
+The interface is a light, layered "3D" theme in Candara: white cards on a pale
+green canvas, Pakistan green for structure and controls, and yellow reserved for
+the figures and states that matter — the headline totals, the selected years, the
+active span band, the primary action and the current tab.
+
 ---
 
 ## Run it
@@ -61,11 +66,12 @@ pretending the SATP numbers are there.
 categories toggle independently, a five-step minimum-fatality filter thins them,
 and clicking one opens its full record.
 
-**Year control.** One slider drives everything: the map, the headline figures, the
-year matrix, the timeline and the inspector. Cumulative mode aggregates 2000 → the
-chosen year; single-year mode isolates it. **Play** animates the whole span at
-850 ms per year. The timeline draws bars for incidents and lines for fatalities,
-with peak values labelled.
+**Years are multi-select.** The 27-year grid accepts any combination: click a year
+to add or remove it, shift-click for a range, or drag the slider for a span from
+2000. Every figure, district shade, matrix cell and timeline bar follows the
+selection, and selected years are filled yellow. `All`, `Clear`, `Latest` and
+`Last 5` are one click each, and **Play** walks the years at 780 ms. The timeline
+draws bars for incidents and lines for fatalities, with peak values labelled.
 
 **Deconflicted layout.** A fixed three-column grid — controls, map, inspector —
 with the legend strip and the timeline inside the map column. Nothing floats over
@@ -75,9 +81,21 @@ covered by another panel. The grid collapses to two columns at 1240 px and to on
 at 980 px, where the rail and the inspector become drawers.
 
 **Linked.** Click a district on the map or in a ranking, and the inspector switches
-to its dossier, the map zooms, and the incident list filters to it. Click a year in
+to its dossier, the map zooms, and the incident list filters to it. The chosen
+district is outlined in **red at 2 px** and brought to the front. Click a year in
 the matrix or a bar in the timeline and the whole view moves. The URL hash records
-year, cumulative/single, tab and district, so any view can be bookmarked.
+the year selection, tab, layout, text size and district, so any view can be shared.
+
+**Layouts and type.** Four layouts: full (filters + map + details), map + filters,
+map + details, and map only, which hides every panel, the legend and the timeline
+so only the map and its header remain (press `M` or the floating button to come
+back). Text size steps from 80% to 145% with A− / A+ and is remembered between
+visits.
+
+**Export.** The Export menu writes the yearly SATP table for the selected years,
+the visible incident records, or the whole current view (selection, totals, filters,
+ranked districts) as JSON; it also saves the timeline as SVG, opens a print/PDF
+pass, and copies a share link that restores the view.
 
 ---
 
@@ -112,6 +130,17 @@ python3 tools/satp_refresh.py --no-districts  # province sheets only (fast)
 | `GET /api/satp/status` | snapshot date, fetch time, district count, warnings, last error, busy flag |
 | `GET /api/satp/data` | the current `satp.json`, no cache |
 | `POST /api/satp/refresh` | start a sync (`?districts=0` to skip the 32 district sheets) |
+
+---
+
+## Interface
+
+| Where | What it does |
+|---|---|
+| Top bar | headline totals (yellow), data-status chip, A−/A+ text size, Export menu, layout selector, Sync SATP, Method |
+| Left rail | year grid and span slider, six independent map layers, shading metric, basemap, eight SATP series switches, nine incident categories, minimum-fatality filter |
+| Map | district choropleth, 2 px red outline on the selected district, labels with values, pins and heat, legend strip above and year timeline below |
+| Right panel | Year, District, Incidents and Sources tabs — the selected years' totals, a clickable year matrix, district dossiers, the incident log and full provenance |
 
 ---
 

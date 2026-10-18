@@ -8,31 +8,31 @@
 
 // ---------------------------------------------------------------- constants
 const SERIES = [
-  {id:'fatalities', name:'Fatalities',            color:'#e0533d', unit:'killed',      axis:'right', key:'total'},
-  {id:'incidents',  name:'Terrorism incidents',    color:'#5aa9e6', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'major',      name:'Major incidents',        color:'#f0a35e', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'suicide',    name:'Suicide attacks',        color:'#a78bfa', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'explosions', name:'Explosions',             color:'#ffd166', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'arrests',    name:'Arrests',                color:'#43c6b7', unit:'people',      axis:'left',  key:'arrested'},
-  {id:'arms',       name:'Arms recoveries',        color:'#8ac926', unit:'recoveries',  axis:'left',  key:'recoveries'},
-  {id:'surrender',  name:'Surrenders',             color:'#e879f9', unit:'people',      axis:'left',  key:'surrendered'}
+  {id:'fatalities', name:'Fatalities',            color:'#b3242f', unit:'killed',      axis:'right', key:'total'},
+  {id:'incidents',  name:'Terrorism incidents',    color:'#0d6b3f', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'major',      name:'Major incidents',        color:'#d98a00', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'suicide',    name:'Suicide attacks',        color:'#6b4bb5', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'explosions', name:'Explosions',             color:'#e0b400', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'arrests',    name:'Arrests',                color:'#118a7a', unit:'people',      axis:'left',  key:'arrested'},
+  {id:'arms',       name:'Arms recoveries',        color:'#5c8a1f', unit:'recoveries',  axis:'left',  key:'recoveries'},
+  {id:'surrender',  name:'Surrenders',             color:'#b03a86', unit:'people',      axis:'left',  key:'surrendered'}
 ];
 const SERIES_BY_ID = Object.fromEntries(SERIES.map(s => [s.id, s]));
 
 const CATS = [
-  {id:'ied',      label:'Bomb / IED',      color:'#ff9f1c'},
-  {id:'armed',    label:'Armed assault',   color:'#4cc9f0'},
-  {id:'suicide',  label:'Suicide bombing', color:'#ff4d6d'},
-  {id:'targeted', label:'Targeted killing',color:'#f72585'},
-  {id:'rocket',   label:'Rocket / mortar', color:'#ffd166'},
-  {id:'kidnap',   label:'Kidnapping',      color:'#b5179e'},
-  {id:'sabotage', label:'Sabotage',        color:'#8ac926'},
-  {id:'drone',    label:'Drone strike',    color:'#c4b5fd'},
-  {id:'other',    label:'Other',           color:'#9aa5b1'}
+  {id:'ied',      label:'Bomb / IED',      color:'#e07a00'},
+  {id:'armed',    label:'Armed assault',   color:'#1c7fb8'},
+  {id:'suicide',  label:'Suicide bombing', color:'#c8102e'},
+  {id:'targeted', label:'Targeted killing',color:'#a4238a'},
+  {id:'rocket',   label:'Rocket / mortar', color:'#c9a200'},
+  {id:'kidnap',   label:'Kidnapping',      color:'#7b3fb0'},
+  {id:'sabotage', label:'Sabotage',        color:'#4f7d16'},
+  {id:'drone',    label:'Drone strike',    color:'#5d6f8c'},
+  {id:'other',    label:'Other',           color:'#7f8f86'}
 ];
 const CAT_BY_ID = Object.fromEntries(CATS.map(c => [c.id, c]));
 
-const RAMP = ['#3d4b55','#f3e2bd','#f1c57e','#e9a052','#dc6f3f','#b93a3c','#7a1023'];
+const RAMP = ['#cde3c3','#e8eec2','#f7e29a','#f3c65e','#e99a3f','#d0603a','#9c2530'];
 const FATA = new Set(['Bajaur','Khyber','Kurram','Mohmand','North Waziristan','Orakzai','South Waziristan']);
 const SATP_ALIAS = {
   'D. I. Khan':'Dera Ismail Khan', 'Battagram':'Batagram', 'Buner':'Buner', 'Tor Ghar':'Tor Ghar',
@@ -49,13 +49,15 @@ const OFFLINE = !!window.__ATLAS__;
 const state = {
   satp:null, byYear:{}, districts:[], districtByName:{}, geoFeatures:[], outline:null, neighbours:null,
   gtdStats:null, incidents:[], incidentsLoaded:false, incidentsPromise:null,
+  years:new Set(YEARS), spanMode:true, spanEnd:2026, lastYearClick:2026,
   year:2026, allYears:true, series:new Set(['fatalities','incidents','major','suicide']),
   cats:new Set(CATS.map(c=>c.id)), minKilled:0,
   ov:{districts:true, borders:true, fata:true, pins:true, heat:false, neighbours:false},
   shade:'gtd_n',
   tab:'year', district:null, incident:null, search:'',
   playing:false, playTimer:null, server:false, status:null, fetchedAt:null,
-  tlCollapsed:false, tlLabels:true
+  tlCollapsed:false, tlLabels:true,
+  fontScale:1, layout:'full'
 };
 
 // ---------------------------------------------------------------- utils
@@ -100,14 +102,37 @@ function buildYearIndex(){
   });
 }
 
-/** rows for the current period: the whole span when cumulative, else the one year */
-function periodRows(){
-  const end = state.year;
-  return YEARS.filter(y => y <= end).map(y => state.byYear[y]);
+/** the years currently selected, ascending */
+function selectedYears(){ return YEARS.filter(y => state.years.has(y)); }
+function isContiguous(){ const ys = selectedYears(); return ys.length > 0 && ys[ys.length-1] - ys[0] + 1 === ys.length; }
+function selectionIsAll(){ return state.years.size === YEARS.length; }
+
+/** short label for a selection: 2015 · 2000–26 · 9 years · 2009, 2014… */
+function selLabel(){
+  const ys = selectedYears();
+  if(!ys.length) return 'no years';
+  if(ys.length === YEARS.length) return '2000–2026';
+  if(ys.length === 1) return String(ys[0]);
+  if(isContiguous()) return ys[0] + '–' + String(ys[ys.length-1]).slice(2);
+  return ys.length + ' years';
 }
 
+/** longer label used in the header and the legend */
+function selLong(){
+  const ys = selectedYears();
+  if(!ys.length) return 'no years selected';
+  if(ys.length === YEARS.length) return 'all years · 2000–2026';
+  if(ys.length === 1) return String(ys[0]);
+  if(isContiguous()) return ys[0] + '–' + ys[ys.length-1];
+  if(ys.length <= 4) return ys.join(', ');
+  return ys.length + ' years · ' + ys[0] + ' to ' + ys[ys.length-1];
+}
+
+/** rows for the current selection */
+function periodRows(){ return selectedYears().map(y => state.byYear[y]); }
+
 function periodTotals(){
-  const rows = state.allYears ? periodRows() : [state.byYear[state.year]];
+  const rows = periodRows();
   const t = {
     fatalities:{total:0,civilians:0,security:0,militants:0,ns:0,incidents:0},
     incidents:0, major:{incidents:0,killed:0,injured:0}, suicide:{incidents:0,killed:0},
@@ -148,8 +173,7 @@ function gtdDistrictValue(name, field){
   if(!d) return 0;
   let v = 0;
   for(const y of Object.keys(d)){
-    if(+y > state.year) continue;
-    if(!state.allYears && +y !== state.year) continue;
+    if(!state.years.has(+y)) continue;
     const row = d[y] || {};
     v += (field === 'n' ? row.n : field === 'k' ? row.k : row.j) || 0;
   }
@@ -168,7 +192,7 @@ function satpDistrictAgg(name){
   const key = SATP_ALIAS[name] || name;
   const rec = (state.satp.districts || {})[key];
   if(!rec || !rec.fatalities) return null;
-  const rows = rec.fatalities.filter(r => r.year <= state.year && (state.allYears || r.year === state.year));
+  const rows = rec.fatalities.filter(r => state.years.has(r.year));
   return {
     total: sum(rows, r=>r.total), civilians: sum(rows, r=>r.civilians),
     security: sum(rows, r=>r.security), militants: sum(rows, r=>r.militants),
@@ -260,14 +284,14 @@ function initMap(){
   // neighbouring regions (optional, under the province)
   if(state.neighbours){
     neighbourLayer = L.geoJSON(state.neighbours, {
-      style:{color:'#2a3b47', weight:1, fillColor:'#0d171e', fillOpacity:.55, dashArray:'2 4'},
+      style:{color:'#a9c3a8', weight:1, fillColor:'#e4eee0', fillOpacity:.6, dashArray:'2 4'},
       interactive:false
     });
     if(state.ov.neighbours) neighbourLayer.addTo(map);
   }
 
   if(state.outline){
-    L.geoJSON(state.outline, {style:{color:'#cfe0ec', weight:2, opacity:.5, fill:false}, interactive:false}).addTo(map);
+    L.geoJSON(state.outline, {style:{color:'#0d6b3f', weight:2.4, opacity:.75, fill:false}, interactive:false}).addTo(map);
   }
 
   buildDistrictLayer();
@@ -291,7 +315,8 @@ function buildDistrictLayer(){
     renderer:districtRenderer,
     style:styleDistrict,
     onEachFeature:(f, layer)=>{
-      layer.on('click', ()=>selectDistrict(f.properties.name));
+      layer.on('click', ()=>{ layer.bringToFront(); selectDistrict(f.properties.name); });
+      layer.on('add', ()=>{ if(layer._path) layer._path.style.cursor = 'pointer'; });
       layer.bindTooltip(()=>districtTooltip(f.properties.name), {sticky:true, direction:'top', opacity:1});
       layer.on('mouseout', ()=>layer.closeTooltip());
     }
@@ -312,7 +337,7 @@ function buildFataLayer(){
       if(!l._path) return;
       injectHatch();
       l._path.setAttribute('fill', 'url(#fataHatch)');
-      l._path.setAttribute('fill-opacity', '.5');
+      l._path.setAttribute('fill-opacity', '.38');
       l._path.setAttribute('stroke', 'none');
       l._path.style.pointerEvents = 'none';
     });
@@ -327,7 +352,7 @@ function injectHatch(){
   hatchDefs = document.createElementNS('http://www.w3.org/2000/svg','defs');
   hatchDefs.innerHTML = '<pattern id="fataHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">' +
     '<rect width="7" height="7" fill="none"></rect>' +
-    '<line x1="0" y1="0" x2="0" y2="7" stroke="#dbe7f0" stroke-width="1.15" stroke-opacity=".5"></line></pattern>';
+    '<line x1="0" y1="0" x2="0" y2="7" stroke="#0d6b3f" stroke-width="1.15" stroke-opacity=".42"></line></pattern>';
   svg.appendChild(hatchDefs);
 }
 
@@ -339,10 +364,10 @@ function styleDistrict(f){
   const base = RAMP[idx] || RAMP[0];
   return {
     fillColor: base,
-    fillOpacity: v == null ? .16 : (selected ? .9 : .72),
-    color: selected ? '#ffffff' : (FATA.has(p.name) ? 'rgba(255,255,255,.62)' : 'rgba(255,255,255,.45)'),
-    weight: selected ? 2.6 : (FATA.has(p.name) ? 1.3 : 1),
-    dashArray: FATA.has(p.name) ? '4 4' : null
+    fillOpacity: v == null ? .18 : (selected ? .82 : .7),
+    color: selected ? '#d92332' : (FATA.has(p.name) ? 'rgba(13,107,63,.55)' : 'rgba(13,107,63,.32)'),
+    weight: selected ? 2 : (FATA.has(p.name) ? 1.3 : 1),
+    dashArray: selected ? null : (FATA.has(p.name) ? '4 4' : null)
   };
 }
 
@@ -353,7 +378,7 @@ function binIndex(v, edges){
 
 let _breaks = null, _breaksKey = '';
 function classBreaks(){
-  const key = state.year + '|' + state.allYears + '|' + state.shade + '|' + hasSatpDistricts();
+  const key = selectedYears().join(',') + '|' + state.shade + '|' + hasSatpDistricts();
   if(_breaks && _breaksKey === key) return _breaks;
   const vals = state.districts.map(p => districtValue(p.name)).filter(v => v != null && v > 0).sort((a,b)=>a-b);
   let breaks;
@@ -381,17 +406,17 @@ function districtTooltip(name){
   const p = state.districtByName[name];
   const satp = satpDistrictAgg(name);
   const gtdN = gtdDistrictValue(name,'n');
-  const a = state.allYears ? '2000–'+state.year : String(state.year);
+  const a = selLabel();
   const rows = [
     ['Period', a],
     ['GTD incidents', num(gtdN)]
   ];
   if(satp) rows.splice(1,0,['SATP killed', num(satp.total)],['SATP incidents', num(satp.incidents)]);
   return '<div style="min-width:160px">' +
-    '<div style="font-size:11.5px;font-weight:600">' + esc(p.display) + (FATA.has(name)?' · FATA':'') + '</div>' +
-    '<div style="font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:#8ba0b0;margin:2px 0 5px">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + '</div>' +
-    rows.map(r => '<div style="display:flex;justify-content:space-between;gap:14px;font-size:10px;color:#b9cbd8"><span>' + r[0] + '</span><b style="font-family:var(--mono);color:#f7c78f">' + r[1] + '</b></div>').join('') +
-    '<div style="font-size:8.5px;color:#61798a;margin-top:4px">' + esc(shadeInfo().label) + ': <b style="color:#e9f0f6">' + (districtValue(name)==null?'no data':num(districtValue(name))) + '</b></div>' +
+    '<div style="font-size:.72rem;font-weight:700">' + esc(p.display) + (FATA.has(name)?' · FATA':'') + '</div>' +
+    '<div style="font-size:.5rem;letter-spacing:.09em;text-transform:uppercase;color:#7f978a;margin:.1rem 0 .3rem">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + '</div>' +
+    rows.map(r => '<div style="display:flex;justify-content:space-between;gap:.8rem;font-size:.62rem;color:#2b4635"><span>' + r[0] + '</span><b style="color:#0d6b3f">' + r[1] + '</b></div>').join('') +
+    '<div style="font-size:.52rem;color:#7f978a;margin-top:.2rem">' + esc(shadeInfo().label) + ': <b style="color:#10281a">' + (districtValue(name)==null?'no data':num(districtValue(name))) + '</b></div>' +
     '</div>';
 }
 
@@ -419,9 +444,10 @@ function renderLabels(){
     placed.push(box);
     const idx = it.v == null ? 0 : binIndex(it.v, breaks.breaks);
     const val = it.v == null ? '—' : num(it.v);
+    const selected = state.district === it.p.name;
     const icon = L.divIcon({
-      className:'district-label' + (idx <= 1 ? ' dim' : ''),
-      html: '<span>' + esc(it.p.display) + '</span><span class="v">' + val + '</span>',
+      className:'district-label' + (idx <= 1 ? ' dim' : '') + (selected ? ' sel' : ''),
+      html: '<span>' + esc(it.p.display) + (selected ? ' <i class="selected-tag">selected</i>' : '') + '</span><span class="v">' + val + '</span>',
       iconSize:[w, h], iconAnchor:[w/2, h/2]
     });
     L.marker([it.p.cy, it.p.cx], {icon, interactive:false, keyboard:false}).addTo(labelLayer);
@@ -445,12 +471,12 @@ function loadIncidents(){
 }
 
 function filteredIncidents(){
+  const wide = state.years.size > 6;
   const list = state.incidents.filter(i => {
-    if(!state.allYears && i.year !== state.year) return false;
-    if(state.allYears && i.year > state.year) return false;
+    if(!state.years.has(i.year)) return false;
     if(!state.cats.has(i.cat)) return false;
     if(i.killed < state.minKilled) return false;
-    if(state.allYears && i.killed < 5) return false;   // keep the cumulative view light
+    if(wide && i.killed < 5) return false;   // keep a many-year view light
     return true;
   });
   if(state.search.trim()){
@@ -470,12 +496,12 @@ function buildPins(){
     const r = clamp(2.6 + Math.sqrt(i.killed) * 1.45, 2.4, 15);
     const c = (CAT_BY_ID[i.cat] || CAT_BY_ID.other).color;
     const mk = L.circleMarker([i.lat, i.lng], {
-      radius:r, color:'rgba(6,11,15,.85)', weight:i.killed>=10?1.6:.9,
-      fillColor:c, fillOpacity:.88, renderer:overlayRenderer
+      radius:r, color:'rgba(16,40,26,.75)', weight:i.killed>=10?1.6:.9,
+      fillColor:c, fillOpacity:.9, renderer:overlayRenderer
     });
     mk.bindTooltip('<b>' + esc(i.place || i.district) + '</b> · ' + shortDate(i.date) +
       '<br><span style="color:' + c + '">' + esc((CAT_BY_ID[i.cat]||CAT_BY_ID.other).label) + '</span>' +
-      '<div style="color:#9fb1bf;font-size:9.5px;margin-top:2px">' + num(i.killed) + ' killed · ' + num(i.injured) + ' injured</div>',
+      '<div style="color:#5c7767;font-size:.55rem;margin-top:.12rem">' + num(i.killed) + ' killed · ' + num(i.injured) + ' injured</div>',
       {direction:'top', opacity:1});
     mk.on('click', e => { L.DomEvent.stopPropagation(e); state.incident = i.id; setTab('incidents'); });
     mk._inc = i;
@@ -492,7 +518,7 @@ function buildHeat(){
   const pts = filteredIncidents().map(i => [i.lat, i.lng, clamp((i.killed + i.injured/3) / 20, .15, 1)]);
   if(heatLayer) map.removeLayer(heatLayer);
   heatLayer = L.heatLayer(pts, {radius:22, blur:19, maxZoom:11, minOpacity:.22,
-    gradient:{.15:'#2b4a5e',.35:'#5aa9e6',.55:'#ffd166',.75:'#f0a35e',1:'#e0533d'}}).addTo(map);
+    gradient:{.15:'#7fc4a0',.35:'#ffd23f',.55:'#f2a93b',.75:'#e0632f',1:'#b3242f'}}).addTo(map);
 }
 
 // ---------------------------------------------------------------- vector basemap (offline)
@@ -508,7 +534,7 @@ function makeVectorLayer(){
       const b = this._tileCoordsToBounds(coords);
       const origin = map.project(b.getNorthWest(), coords.z);
       const P = (lng,lat) => map.project([lat,lng],coords.z).subtract(origin);
-      ctx.fillStyle = '#0a1218'; ctx.fillRect(0,0,size.x,size.y);
+      ctx.fillStyle = '#eef5ea'; ctx.fillRect(0,0,size.x,size.y);
       const draw = (geom) => {
         if(!geom) return;
         const polys = geom.type === 'Polygon' ? [geom.coordinates] : geom.type === 'MultiPolygon' ? geom.coordinates : [];
@@ -519,13 +545,13 @@ function makeVectorLayer(){
         }));
       };
       if(state.neighbours){
-        ctx.fillStyle = '#0c161d'; ctx.strokeStyle = '#1d2c36'; ctx.lineWidth = 1;
+        ctx.fillStyle = '#e2ecdd'; ctx.strokeStyle = '#cfe0c9'; ctx.lineWidth = 1;
         state.neighbours.features.forEach(f => { draw(f.geometry); ctx.fill(); ctx.stroke(); });
       }
       const og = outlineGeom();
-      ctx.fillStyle = '#101d26'; draw(og); ctx.fill();
-      ctx.strokeStyle = 'rgba(206,224,235,.35)'; ctx.lineWidth = 1.4; draw(og); ctx.stroke();
-      ctx.fillStyle = 'rgba(126,150,166,.5)'; ctx.font = '9px system-ui';
+      ctx.fillStyle = '#f7fbf3'; draw(og); ctx.fill();
+      ctx.strokeStyle = 'rgba(13,107,63,.45)'; ctx.lineWidth = 1.4; draw(og); ctx.stroke();
+      ctx.fillStyle = 'rgba(92,119,103,.75)'; ctx.font = '9px Candara, Segoe UI, sans-serif';
       for(let lon = Math.ceil(b.getWest()); lon <= b.getEast(); lon++){
         const a = P(lon, b.getNorth());
         if(a.x > 4 && a.x < size.x - 30) ctx.fillText(Math.abs(lon)+'°E', a.x+3, 11);
@@ -569,16 +595,16 @@ function renderLegend(){
   $('#lgSource').textContent = info.usingSatp ? 'SATP · districts' : 'GTD · districts';
   $('#lgNote').textContent = info.pending
     ? 'SATP district series not synced yet — showing the GTD incident record'
-    : (state.allYears ? 'Cumulative to ' + state.year : 'Year ' + state.year);
+    : selLong();
   const tag = $('#mapTag');
-  tag.textContent = info.label + ' · ' + (state.allYears ? '2000–' + state.year : state.year) + ' · ' + info.source;
+  tag.textContent = info.label + ' · ' + selLabel() + ' · ' + info.source;
 }
 
 // ---------------------------------------------------------------- header
 function renderHeader(){
   const t = periodTotals();
   $('#hsIncidents').textContent = num(t.incidents);
-  $('#hsIncidentsLab').textContent = state.allYears ? 'incidents 2000–' + state.year : 'incidents ' + state.year;
+  $('#hsIncidentsLab').textContent = 'incidents · ' + selLabel();
   $('#hsKilled').textContent = num(t.fatalities.total);
   $('#hsCiv').textContent = num(t.fatalities.civilians);
   $('#hsSec').textContent = num(t.fatalities.security);
@@ -603,6 +629,8 @@ function renderTimeline(){
   const bw = pw / rows.length;
   const maxL = Math.max(50, ...counts.map(s => Math.max(...rows.map(r => seriesValue(s.id, r)))));
   const maxR = Math.max(50, ...rows.map(r => r.fatalities.total));
+  const fx0 = () => M.l + (selectedYears()[0] - 2000) * bw;
+  const fx1 = () => { const ys = selectedYears(); return (ys[ys.length-1] - ys[0] + 1) * bw; };
   const x = y => M.l + (y - 2000 + .5) * bw;
   const yL = v => M.t + ph - (v / maxL) * ph;
   const yR = v => M.t + ph - (v / maxR) * ph;
@@ -615,17 +643,22 @@ function renderTimeline(){
     s += '<text class="tl-axis" x="' + (M.l-4) + '" y="' + (gy+3) + '" text-anchor="end">' + compact(maxL*(3-i)/3) + '</text>';
     if(fat) s += '<text class="tl-axis" x="' + (W-M.r+5) + '" y="' + (gy+3) + '">' + compact(maxR*(3-i)/3) + '</text>';
   }
-  // focus band
-  const fx = M.l + (state.year - 2000) * bw;
-  s += '<rect class="tl-focus" x="' + fx + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
+  // the selected years sit on a yellow band
+  if(state.years.size < YEARS.length){
+    rows.forEach((r,i) => {
+      if(!state.years.has(r.year)) return;
+      s += '<rect class="tl-focus" x="' + (M.l + i*bw) + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
+    });
+    s += '<rect x="' + (fx0()) + '" y="' + (M.t-4) + '" width="' + (fx1()) + '" height="2" rx="1" fill="#d9ad12"/>';
+  }
 
   // bars: terrorism incidents
   if(state.series.has('incidents')){
     rows.forEach((r,i) => {
       const h = (r.incidents.incidents / maxL) * ph;
-      s += '<rect class="tl-bar" x="' + (M.l + i*bw + Math.min(2, bw*.12)) + '" y="' + (M.t+ph-h) +
+      s += '<rect class="tl-bar' + (state.years.has(r.year) ? ' on' : '') + '" x="' + (M.l + i*bw + Math.min(2, bw*.12)) + '" y="' + (M.t+ph-h) +
         '" width="' + Math.max(1, bw - Math.min(4, bw*.24)) + '" height="' + Math.max(1,h) + '" rx="' + Math.min(1.5,bw/6) +
-        '" fill="#22405a" data-y="' + r.year + '"><title>' + r.year + ': ' + num(r.incidents.incidents) + ' incidents</title></rect>';
+        '" data-y="' + r.year + '"><title>' + r.year + ': ' + num(r.incidents.incidents) + ' incidents</title></rect>';
     });
   }
   // lines
@@ -652,14 +685,14 @@ function renderTimeline(){
   // year ticks
   rows.forEach((r,i) => {
     if(r.year % 2 === 0 || r.year === state.year)
-      s += '<text class="tl-axis" x="' + x(r.year) + '" y="' + (H-4) + '" text-anchor="middle" fill="' + (r.year===state.year?'#f0a35e':'#4f6473') + '">' + (r.year % (bw<17?4:2) === 0 ? "'" + String(r.year).slice(2) : '') + '</text>';
+      s += '<text class="tl-axis" x="' + x(r.year) + '" y="' + (H-4) + '" text-anchor="middle" fill="' + (state.years.has(r.year)?'#0d6b3f':'#9aae9f') + '">' + (r.year % (bw<17?4:2) === 0 ? "'" + String(r.year).slice(2) : '') + '</text>';
     s += '<rect class="tl-year-hit" data-y="' + r.year + '" x="' + (M.l + i*bw) + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
   });
   s += '</svg>';
   host.innerHTML = s;
 
   host.querySelectorAll('.tl-year-hit').forEach(el => {
-    el.addEventListener('click', () => { setYear(+el.dataset.y, false); });
+    el.addEventListener('click', e => { toggleYear(+el.dataset.y, e.shiftKey); });
     el.addEventListener('mouseenter', () => showTip(+el.dataset.y, host));
     el.addEventListener('mousemove', e => moveTip(e, host));
     el.addEventListener('mouseleave', hideTip);
@@ -676,7 +709,7 @@ function showTip(year, host){
   const r = state.byYear[year];
   if(!r) return;
   if(!tlTip){ tlTip = document.createElement('div'); tlTip.className = 'tl-tip'; }
-  tlTip.innerHTML = '<b>' + year + '</b>' + SERIES.filter(s=>state.series.has(s.id)).map(s =>
+  tlTip.innerHTML = '<b>' + year + (state.years.has(year) ? ' ✓' : '') + '</b>' + SERIES.filter(s=>state.series.has(s.id)).map(s =>
     '<div class="r"><span>' + s.name + '</span><span>' + num(seriesValue(s.id, r)) + '</span></div>'
   ).join('');
   host.appendChild(tlTip);
@@ -714,7 +747,7 @@ function delta(cur, prev){
 
 function renderYearTab(el){
   const t = periodTotals();
-  const single = !state.allYears;
+  const single = state.years.size === 1;
   const prev = single ? state.byYear[state.year-1] : null;
   const dK = single ? delta(t.fatalities.total, prev ? prev.fatalities.total : null) : null;
   const dC = single ? delta(t.fatalities.civilians, prev ? prev.fatalities.civilians : null) : null;
@@ -723,8 +756,8 @@ function renderYearTab(el){
 
   el.innerHTML =
     '<div class="kicker">' + (single ? 'Year in review' : 'Cumulative record') + '</div>' +
-    '<div class="h2">' + state.year + '</div>' +
-    '<div class="sub">' + (single ? 'single year · SATP datasheets' : '2000–' + state.year + ' · ' + (state.year-1999) + ' years') + '</div>' +
+    '<div class="h2">' + esc(selLong()) + '</div>' +
+    '<div class="sub">' + (single ? 'single year · SATP datasheets' : state.years.size + ' of 27 years · SATP datasheets') + '</div>' +
     '<div class="kpi-grid" style="margin-top:12px">' +
       kpi('Killed', t.fatalities.total, dK) +
       kpi('Civilians', t.fatalities.civilians, dC) +
@@ -739,8 +772,8 @@ function renderYearTab(el){
       ? '<div class="section"><div class="section-head"><h3>Who was killed</h3><span class="sub">attack type · ' + (single?'year':'span') + '</span></div>' + renderVictimSplit(t) + '</div>'
       : '') +
     '<div class="section"><div class="section-head"><h3>Reading this</h3></div>' +
-      '<div class="note" style="font-size:9.5px;color:#61798a;line-height:1.6">SATP counts militants killed in security operations inside the fatality total, so the bars and the fatality line move apart sharply in years of heavy operations (2009, 2015, 2025). The atlas reports them separately rather than merging them.</div></div>';
-  $$('#inspBody .matrix [data-y]').forEach(cell => cell.addEventListener('click', () => setYear(+cell.dataset.y, false)));
+      '<div class="note">SATP counts militants killed in security operations inside the fatality total, so the bars and the fatality line move apart sharply in years of heavy operations (2009, 2015, 2025). The atlas reports them separately rather than merging them.</div></div>';
+  $$('#inspBody .matrix [data-y]').forEach(cell => cell.addEventListener('click', e => toggleYear(+cell.dataset.y, e.shiftKey)));
 }
 
 function kpi(label, value, d){
@@ -752,7 +785,7 @@ function renderMatrix(){
   const rows = SERIES.filter(s => state.series.has(s.id));
   if(!rows.length) return '<div class="empty">No series selected. Turn one on in the left rail.</div>';
   let html = '<div class="matrix-wrap"><table class="matrix"><thead><tr><th></th>';
-  YEARS.forEach(y => { html += '<th data-y="' + y + '" class="' + (y===state.year?'cur':'') + '">' + String(y).slice(2) + '</th>'; });
+  YEARS.forEach(y => { html += '<th data-y="' + y + '" class="' + (state.years.has(y)?'in ':'') + (y===state.year?'cur':'') + '">' + String(y).slice(2) + '</th>'; });
   html += '</tr></thead><tbody>';
   rows.forEach(s => {
     const vals = YEARS.map(y => seriesValue(s.id, state.byYear[y]));
@@ -762,7 +795,7 @@ function renderMatrix(){
       const v = vals[i];
       const a = v ? Math.max(.1, Math.pow(v/max, .65)) : 0;
       const bg = v ? 'rgba(240,163,94,' + a.toFixed(2) + ')' : 'transparent';
-      html += '<td data-y="' + y + '" class="' + (y===state.year?'cur':'') + '" style="background:' + bg + '">' + (v ? compact(v) : '·') + '</td>';
+      html += '<td data-y="' + y + '" class="' + (state.years.has(y)?'in ':'') + (y===state.year?'cur':'') + '" style="background:' + bg + '">' + (v ? compact(v) : '·') + '</td>';
     });
     html += '</tr>';
   });
@@ -772,7 +805,7 @@ function renderMatrix(){
 
 function renderSeriesTable(t){
   const rows = SERIES.filter(s => state.series.has(s.id));
-  const single = !state.allYears;
+  const single = state.years.size === 1;
   const peak = {};
   rows.forEach(s => {
     let best = {y:null, v:-1};
@@ -804,7 +837,7 @@ function renderVictimSplit(t){
   if(state.series.has('explosions')) parts.push({name:'Explosions', d:t.explosions, k:'killed'});
   return '<table class="tbl"><thead><tr><th>Type</th><th>Civilians</th><th>Security</th><th>Militants</th><th>Total</th></tr></thead><tbody>' +
     parts.map(p => {
-      const rows = state.allYears ? periodRows() : [state.byYear[state.year]];
+      const rows = periodRows();
       const get = f => sum(rows, r => (r[ p.name==='Suicide attacks' ? 'suicide' : 'explosions' ][f]) || 0);
       return '<tr><td>' + p.name + '</td><td>' + num(get('killed_civ')) + '</td><td>' + num(get('killed_sf')) +
         '</td><td>' + num(get('killed_mil')) + '</td><td class="em">' + num(get('killed')) + '</td></tr>';
@@ -820,7 +853,7 @@ function renderDistrictTab(el){
       '<div class="sub">Click any district shape on the map, or start with the highest values.</div>' +
       '<div class="section"><div class="section-head"><h3>Highest now</h3><span class="sub">' + esc(shadeInfo().label) + '</span></div>' +
       '<table class="tbl"><tbody>' + ranked.map((x,i) =>
-        '<tr data-d="' + esc(x.p.name) + '" style="cursor:pointer"><td><span style="color:#4f6473;font-family:var(--mono);font-size:8px;margin-right:6px">' + String(i+1).padStart(2,'0') + '</span>' + esc(x.p.display) + '</td><td class="em">' + num(x.v) + '</td></tr>'
+        '<tr data-d="' + esc(x.p.name) + '" style="cursor:pointer"><td><span class="rank">' + String(i+1).padStart(2,'0') + '</span>' + esc(x.p.display) + '</td><td class="em">' + num(x.v) + '</td></tr>'
       ).join('') + '</tbody></table></div>';
     $$('#inspBody tr[data-d]').forEach(tr => tr.addEventListener('click', () => selectDistrict(tr.dataset.d)));
     return;
@@ -834,16 +867,16 @@ function renderDistrictTab(el){
   const series = satp ? districtSpark(state.district) : gtdSpark(state.district);
   el.innerHTML =
     '<div class="dist-head"><div class="dist-emblem">' + esc(p.display.slice(0,1)) + '</div><div>' +
-      '<div class="h2" style="font-size:19px">' + esc(p.display) + (FATA.has(state.district) ? '<span class="badge fata">FATA</span>' : '<span class="badge settled">Settled</span>') + '</div>' +
+      '<div class="h2" style="font-size:1.22rem">' + esc(p.display) + (FATA.has(state.district) ? '<span class="badge fata">FATA</span>' : '<span class="badge settled">Settled</span>') + '</div>' +
       '<div class="sub">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + ' · ' + num(Math.round(p.area_km2)) + ' km²</div></div></div>' +
     '<div class="kpi-grid">' +
-      '<div class="kpi"><div class="v">' + (satp ? num(satp.total) : '—') + '</div><div class="l">SATP killed · ' + (state.allYears?'2000–'+state.year:state.year) + '</div></div>' +
+      '<div class="kpi"><div class="v">' + (satp ? num(satp.total) : '—') + '</div><div class="l">SATP killed · ' + esc(selLabel()) + '</div></div>' +
       '<div class="kpi"><div class="v">' + (satp ? num(satp.incidents) : '—') + '</div><div class="l">SATP killing incidents</div></div>' +
-      '<div class="kpi"><div class="v">' + num(gtdN) + '</div><div class="l">GTD incidents · ' + (state.allYears?'2000–'+state.year:state.year) + '</div></div>' +
+      '<div class="kpi"><div class="v">' + num(gtdN) + '</div><div class="l">GTD incidents · ' + esc(selLabel()) + '</div></div>' +
       '<div class="kpi"><div class="v">' + num(gtdK) + '</div><div class="l">GTD fatalities</div></div>' +
     '</div>' +
     (satp ? '' : '<div class="section"><div class="empty">SATP publishes a yearly sheet for this district, but it has not been downloaded yet. Press <b>Sync SATP</b> with an internet connection to load all ' + (combined?'combined ':'') + 'district series.</div></div>') +
-    '<div class="section"><div class="section-head"><h3>' + (satp?'SATP fatalities by year':'GTD incidents by year') + '</h3><span class="sub">' + (state.allYears?'2000–'+state.year:state.year) + '</span></div>' +
+    '<div class="section"><div class="section-head"><h3>' + (satp?'SATP fatalities by year':'GTD incidents by year') + '</h3><span class="sub">' + esc(selLabel()) + '</span></div>' +
       '<div class="spark"><div class="cap">' + (satp?'people killed':'incidents') + '</div>' + series + '</div></div>' +
     (satp ? '<div class="section"><div class="section-head"><h3>Recent years</h3><span class="sub">SATP</span></div>' +
       '<table class="tbl"><thead><tr><th>Year</th><th>Incidents</th><th>Civilians</th><th>Security</th><th>Total</th></tr></thead><tbody>' +
@@ -896,7 +929,12 @@ function sparkSvg(vals, color){
   vals.forEach((v,i) => { d += (i?'L':'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); area += 'L' + x(i).toFixed(1) + ' ' + y(v).toFixed(1); });
   area += 'L' + x(vals.length-1) + ' ' + (H-pad) + ' Z';
   const cur = vals[state.year - 2000];
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img">' +
+  let bands = '';
+  YEARS.forEach((y,i) => {
+    if(!state.years.has(y)) return;
+    bands += '<rect x="' + (x(i) - (W/(vals.length-1))/2) + '" y="0" width="' + (W/(vals.length-1)) + '" height="' + H + '" fill="#0d6b3f" opacity=".07"/>';
+  });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img">' + bands +
     '<path d="' + area + '" fill="' + color + '22"/>' +
     '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.5"/>' +
     '<rect x="' + (x(state.year - 2000) - 2) + '" y="0" width="4" height="' + H + '" fill="' + color + '" opacity=".18"/>' +
@@ -921,7 +959,7 @@ function renderIncidentsTab(el){
       const c = CAT_BY_ID[i.cat] || CAT_BY_ID.other;
       el.innerHTML = '<button class="link" id="incBack" style="margin-bottom:8px">← all incidents</button>' +
         '<div class="kicker">' + esc(c.label) + '</div>' +
-        '<div class="h2" style="font-size:19px">' + esc(i.place || i.district) + '</div>' +
+        '<div class="h2" style="font-size:1.22rem">' + esc(i.place || i.district) + '</div>' +
         '<div class="sub">' + esc(fmtDate(i.date)) + ' · ' + esc(i.district) + ' District' + (FATA.has(i.district)?' · erstwhile FATA':'') + '</div>' +
         '<div class="kpi-grid" style="margin-top:10px"><div class="kpi"><div class="v">' + num(i.killed) + '</div><div class="l">killed</div></div>' +
         '<div class="kpi"><div class="v">' + num(i.injured) + '</div><div class="l">injured</div></div></div>' +
@@ -947,8 +985,8 @@ function renderIncidentsTab(el){
     return;
   }
   const list = filteredIncidents().slice().sort((a,b) => b.killed - a.killed || b.date.localeCompare(a.date)).slice(0, 120);
-  el.innerHTML = '<div class="kicker">Incident log</div><div class="h2" style="font-size:18px">' + (state.allYears ? 'GTD record' : state.year) + '</div>' +
-    '<div class="sub">' + num(filteredIncidents().length) + ' incidents in view' + (state.allYears?' · showing fatalities 5+, deadliest first':'') + '</div>' +
+  el.innerHTML = '<div class="kicker">Incident log</div><div class="h2" style="font-size:18px">' + esc(selLong()) + '</div>' +
+    '<div class="sub">' + num(filteredIncidents().length) + ' incidents in view' + (state.years.size>6?' · showing fatalities 5+, deadliest first':' · deadliest first') + '</div>' +
     '<input class="search" id="incSearch" placeholder="Search place, actor, summary…" value="' + esc(state.search) + '">' +
     '<div class="inc-list">' + (list.map(i => {
       const c = CAT_BY_ID[i.cat] || CAT_BY_ID.other;
@@ -986,7 +1024,7 @@ function renderSourcesTab(el){
       '<tr><td>District series</td><td>' + Object.keys(state.satp.districts || {}).length + ' loaded</td></tr>' +
       '<tr><td>Update path</td><td>' + (state.server ? 'serve.py · live' : 'static copy') + '</td></tr>' +
     '</tbody></table>' +
-    (state.server ? '' : '<div class="note" style="margin-top:8px">This copy is being served as static files, so the in-app refresh cannot run. Start it with <code>python3 serve.py</code> to enable one-click SATP synchronisation.</div>') +
+    (state.server ? '' : '<div class="note" style="margin-top:.4rem">This copy is being served as static files, so the in-app refresh cannot run. Start it with <code>python3 serve.py</code> to enable one-click SATP synchronisation.</div>') +
     '</div>' +
     '<div class="section"><div class="section-head"><h3>Datasheets</h3><span class="sub">' + rows.length + '</span></div>' +
       rows.map(r => '<div class="src-item"><b>' + esc(r[0]) + '</b><a href="' + esc(r[1]) + '" target="_blank" rel="noopener">' + esc(r[1].replace(/^https?:\/\//,'').slice(0,58)) + ' ↗</a></div>').join('') +
@@ -1003,11 +1041,28 @@ function renderSourcesTab(el){
 }
 
 // ---------------------------------------------------------------- orchestration
+function syncSelectedPath(){
+  if(!dLayer || !dLayer.eachLayer) return;
+  dLayer.eachLayer(l => {
+    if(!l._path || !l.feature) return;
+    const on = l.feature.properties.name === state.district;
+    l._path.classList.toggle('district-selected', on);
+    if(on){
+      l._path.setAttribute('stroke', '#d92332');
+      l._path.setAttribute('stroke-width', '2');
+      l._path.setAttribute('stroke-opacity', '1');
+      if(l.bringToFront) l.bringToFront();
+    }
+  });
+}
+
 function render(){
   _breaks = null;
+  paintYearChrome();
   renderHeader();
   renderLegend();
   dLayer.setStyle(styleDistrict);
+  syncSelectedPath();
   renderLabels();
   buildPins();
   if(state.ov.heat) buildHeat();
@@ -1016,15 +1071,80 @@ function render(){
   updateHash();
 }
 
-function setYear(y, keepMode){
-  state.year = clamp(y, 2000, 2026);
-  if(!keepMode) state.allYears = false;
-  $('#yearRange').value = state.year;
-  $('#yearBig').textContent = state.year;
-  $('#yearSub').textContent = state.allYears ? 'cumulative · 2000–' + state.year : 'single year · ' + state.year;
-  $('#btnAllYears').setAttribute('aria-pressed', state.allYears ? 'true' : 'false');
-  document.body.classList.toggle('cumulative', state.allYears);
+function selectOnlyYear(y){
+  const v = clamp(Math.round(y), 2000, 2026);
+  state.years = new Set([v]);
+  state.spanMode = false;
+  state.spanEnd = v; state.year = v; state.lastYearClick = v;
   render();
+}
+
+function selectSpan(end){
+  const v = clamp(Math.round(end), 2000, 2026);
+  state.years = new Set(YEARS.filter(y => y <= v));
+  state.spanMode = true;
+  state.spanEnd = v; state.year = v; state.lastYearClick = v;
+  render();
+}
+
+function setYears(list){
+  const ys = Array.from(new Set(list.filter(y => y >= 2000 && y <= 2026))).sort((a,b)=>a-b);
+  if(!ys.length) return toast('Keep at least one year selected.');
+  state.years = new Set(ys);
+  state.spanMode = false;
+  state.year = ys[ys.length-1];
+  state.spanEnd = state.year;
+  render();
+}
+
+function toggleYear(y, shift){
+  y = clamp(Math.round(y), 2000, 2026);
+  if(!shift && state.years.size === YEARS.length){ return selectOnlyYear(y); }
+  if(shift){
+    const a = Math.min(state.lastYearClick, y), b = Math.max(state.lastYearClick, y);
+    state.years = new Set(YEARS.filter(v => v >= a && v <= b));
+    state.spanMode = false;
+  }else{
+    state.spanMode = false;
+    if(state.years.has(y)){
+      if(state.years.size === 1) return toast('Keep at least one year selected.');
+      state.years.delete(y);
+    }else{
+      state.years.add(y);
+    }
+  }
+  state.year = Math.max(...state.years);
+  state.spanEnd = state.year;
+  state.lastYearClick = y;
+  render();
+}
+
+function buildYearChips(){
+  const host = $('#yearChips');
+  if(!host) return;
+  host.innerHTML = YEARS.map(y =>
+    '<button type="button" class="ychip" data-y="' + y + '" aria-pressed="false" title="' + y + ' (shift-click for a range)">' + y + '</button>'
+  ).join('');
+  $$('#yearChips .ychip').forEach(b => b.addEventListener('click', e => toggleYear(+b.dataset.y, e.shiftKey)));
+}
+
+function paintYearChrome(){
+  const ys = selectedYears();
+  const chips = $$('#yearChips .ychip');
+  if(!chips.length) buildYearChips();
+  $$('#yearChips .ychip').forEach(b => {
+    const y = +b.dataset.y, on = state.years.has(y);
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+  $('#yearBig').textContent = selLabel();
+  $('#yearSub').textContent = (ys.length === 1 ? 'single year' : ys.length === YEARS.length ? 'all 27 years' : ys.length + ' of 27 years')
+    + (state.spanMode && ys.length > 1 && ys.length < YEARS.length ? ' · span' : '');
+  const r = $('#yearRange');
+  if(r) r.value = state.spanEnd;
+  const t = $('#tlSelected');
+  if(t) t.textContent = ys.length + '/27 years';
+  document.body.classList.toggle('cumulative', state.years.size > 1);
 }
 
 function selectDistrict(name){
@@ -1035,10 +1155,34 @@ function selectDistrict(name){
   map.fitBounds(L.geoJSON({type:'FeatureCollection', features:state.geoFeatures.filter(f => f.properties.name === name)}).getBounds(), {padding:[60,60], maxZoom:10});
 }
 
+function encodeYears(){
+  const ys = selectedYears();
+  if(ys.length === YEARS.length) return 'all';
+  const parts = [];
+  let i = 0;
+  while(i < ys.length){
+    let j = i;
+    while(j + 1 < ys.length && ys[j+1] === ys[j] + 1) j++;
+    parts.push(i === j ? String(ys[i]) : ys[i] + '-' + ys[j]);
+    i = j + 1;
+  }
+  return parts.join(',');
+}
+
+function decodeYears(str){
+  const out = [];
+  String(str || '').split(',').forEach(part => {
+    const m = part.match(/^(\d{4})-(\d{4})$/);
+    if(m){ for(let y = +m[1]; y <= +m[2]; y++) out.push(y); }
+    else if(/^\d{4}$/.test(part)) out.push(+part);
+  });
+  return out.filter(y => y >= 2000 && y <= 2026);
+}
+
 function updateHash(){
   clearTimeout(updateHash._t);
   updateHash._t = setTimeout(() => {
-    const p = ['y=' + state.year, 'all=' + (state.allYears?1:0), 'tab=' + state.tab];
+    const p = ['ys=' + encodeYears(), 'tab=' + state.tab, 'lay=' + state.layout, 'fs=' + state.fontScale.toFixed(2)];
     if(state.district) p.push('d=' + encodeURIComponent(state.district));
     try{ history.replaceState(null, '', '#' + p.join('&')); }
     catch(e){ try{ location.hash = p.join('&'); }catch(_){} }
@@ -1192,7 +1336,7 @@ function buildCatToggles(){
   const host = $('#catToggles');
   host.innerHTML = CATS.map(c => {
     const on = state.cats.has(c.id);
-    const n = state.incidentsLoaded ? state.incidents.filter(i => i.cat === c.id && (state.allYears ? i.year <= state.year : i.year === state.year)).length : '';
+    const n = state.incidentsLoaded ? state.incidents.filter(i => i.cat === c.id && state.years.has(i.year)).length : '';
     return '<button class="cat ' + (on?'on':'') + '" data-c="' + c.id + '" type="button" aria-pressed="' + on + '"><i style="background:' + c.color + '"></i>' + esc(c.label) + '<span class="n">' + n + '</span></button>';
   }).join('');
   $$('#catToggles .cat').forEach(b => b.addEventListener('click', () => {
@@ -1219,13 +1363,32 @@ function togglePlay(){
   state.playing = true;
   $('#btnPlay').textContent = '❚❚ Pause';
   let y = 2000;
-  state.allYears = false;
-  setYear(2000, true);
+  selectOnlyYear(2000);
   state.playTimer = setInterval(() => {
     y++;
     if(y > 2026){ clearInterval(state.playTimer); state.playing = false; $('#btnPlay').textContent = '▶ Play years'; return; }
-    setYear(y, true);
+    selectOnlyYear(y);
   }, 780);
+}
+
+// ---------------------------------------------------------------- export
+function download(name, text, type){
+  const a = document.createElement('a');
+  a.download = name;
+  if(window.URL && URL.createObjectURL && window.Blob){
+    const blob = new Blob([text], {type: type || 'text/plain;charset=utf-8'});
+    a.href = URL.createObjectURL(blob);
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }else{
+    a.href = 'data:' + (type || 'text/plain') + ';charset=utf-8,' + encodeURIComponent(text);
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
+function csvCell(v){
+  const t = String(v == null ? '' : v);
+  return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
 }
 
 function exportCsv(){
@@ -1233,26 +1396,251 @@ function exportCsv(){
     'major_incidents','major_killed','major_injured','suicide_attacks','suicide_killed','explosions','explosion_killed',
     'arrests','arrest_incidents','arms_recoveries','surrender_incidents','surrendered'];
   const rows = [head.join(',')];
-  YEARS.forEach(y => {
+  selectedYears().forEach(y => {
     const r = state.byYear[y];
     rows.push([y, r.incidents.incidents, r.fatalities.incidents, r.fatalities.total, r.fatalities.civilians, r.fatalities.security,
       r.fatalities.militants, r.fatalities.ns, r.major.incidents, r.major.killed, r.major.injured,
       r.suicide.incidents, r.suicide.killed, r.explosions.incidents, r.explosions.killed,
       r.arrests.arrested, r.arrests.incidents, r.arms.recoveries, r.surrender.incidents, r.surrender.surrendered].join(','));
   });
-  const text = rows.join('\n');
-  const a = document.createElement('a');
-  a.download = 'kp-satp-yearly-data.csv';
-  if(window.URL && URL.createObjectURL){
-    const blob = new Blob([text], {type:'text/csv;charset=utf-8'});
-    a.href = URL.createObjectURL(blob);
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-  }else{
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(text);
-    a.click();
-  }
-  toast('Yearly SATP table downloaded.');
+  download('kp-satp-yearly-' + encodeYears().replace(/[,]/g,'_') + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
+  toast('Yearly SATP table downloaded · ' + selectedYears().length + ' years.');
+}
+
+function exportIncidentsCsv(){
+  if(!state.incidentsLoaded){ toast('The incident layer is still loading.'); return; }
+  const head = ['id','date','year','district','place','lat','lng','category','killed','injured','actor','target','summary'];
+  const rows = [head.join(',')];
+  filteredIncidents()
+    .slice().sort((a,b) => b.killed - a.killed || b.date.localeCompare(a.date))
+    .forEach(i => rows.push([i.id, i.date, i.year, i.district, i.place, i.lat, i.lng, (CAT_BY_ID[i.cat]||CAT_BY_ID.other).label,
+      i.killed, i.injured, i.actor, i.target, i.summary].map(csvCell).join(',')));
+  download('kp-incidents-' + encodeYears().replace(/[,]/g,'_') + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
+  toast(rows.length - 1 + ' incidents downloaded.');
+}
+
+function exportJson(){
+  const t = periodTotals();
+  const view = {
+    generated: new Date().toISOString(),
+    source: state.satp.source,
+    as_of: state.satp.as_of,
+    selection: { years: selectedYears(), label: selLong() },
+    layout: state.layout,
+    filters: {
+      series: Array.from(state.series), categories: Array.from(state.cats),
+      min_fatalities: state.minKilled, shade: state.shade, district: state.district
+    },
+    totals: t,
+    districts: state.districts
+      .map(p => ({ name: p.name, display: p.display, fata: FATA.has(p.name), value: districtValue(p.name) }))
+      .filter(d => d.value != null)
+      .sort((a,b) => b.value - a.value)
+  };
+  download('kp-atlas-view.json', JSON.stringify(view, null, 2), 'application/json;charset=utf-8');
+  toast('Current view downloaded as JSON.');
+}
+
+function exportSvg(){
+  const svg = $('#tlChart svg');
+  if(!svg || state.tlCollapsed){ toast('Show the timeline first, then export its chart.'); return; }
+  const clone = svg.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const vb = (svg.getAttribute('viewBox') || '0 0 900 140').split(/\s+/).map(Number);
+  clone.setAttribute('width', String(vb[2] || 900));
+  clone.setAttribute('height', String(vb[3] || 140));
+  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  style.textContent = '.tl-axis{font:10px Candara,Segoe UI,sans-serif;fill:#7f978a}' +
+    '.tl-grid{stroke:#e2ecdf;stroke-width:1}.tl-bar{fill:#bfe0ca}.tl-bar.on{fill:#2f8f5b}' +
+    '.tl-focus{fill:rgba(255,207,51,.22);stroke:rgba(224,180,27,.55)}';
+  clone.insertBefore(style, clone.firstChild);
+  const text = new XMLSerializer().serializeToString(clone);
+  download('kp-atlas-timeline.svg', text, 'image/svg+xml;charset=utf-8');
+  toast('Timeline exported as SVG.');
+}
+
+function copyLink(){
+  const url = location.href;
+  const fallback = () => {
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand && document.execCommand('copy');
+      ta.remove();
+      toast('Link copied — it restores these years, this district and this layout.');
+    }catch(e){ toast('Copy failed. The address bar already holds the shareable link.'); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(
+      () => toast('Link copied — it restores these years, this district and this layout.'),
+      fallback
+    );
+  }else fallback();
+}
+
+function runExport(action){
+  if(action === 'csv') exportCsv();
+  else if(action === 'incidents') exportIncidentsCsv();
+  else if(action === 'json') exportJson();
+  else if(action === 'svg') exportSvg();
+  else if(action === 'print') window.print();
+  else if(action === 'link') copyLink();
+}
+
+// ---------------------------------------------------------------- layout & type
+function applyLayout(v){
+  const allowed = ['full','wide','focus','maponly'];
+  state.layout = allowed.includes(v) ? v : 'full';
+  document.body.classList.remove('layout-full','layout-wide','layout-focus','layout-maponly');
+  document.body.classList.add('layout-' + state.layout);
+  const sel = $('#layoutSel');
+  if(sel) sel.value = state.layout;
+  try{ localStorage.setItem('kp-layout', state.layout); }catch(e){}
+  setTimeout(() => { if(typeof map !== 'undefined' && map) map.invalidateSize(); renderTimeline(); }, 90);
+}
+
+const FONT_STEPS = [0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.45];
+function applyFont(scale){
+  state.fontScale = clamp(Number(scale) || 1, FONT_STEPS[0], FONT_STEPS[FONT_STEPS.length-1]);
+  document.documentElement.style.setProperty('--ui', state.fontScale.toFixed(3));
+  document.documentElement.style.fontSize = (16 * state.fontScale).toFixed(2) + 'px';
+  const val = $('#fsVal');
+  if(val) val.textContent = Math.round(state.fontScale * 100) + '%';
+  try{ localStorage.setItem('kp-font', String(state.fontScale)); }catch(e){}
+  setTimeout(() => { if(typeof map !== 'undefined' && map) map.invalidateSize(); renderTimeline(); }, 90);
+}
+
+function stepFont(dir){
+  const cur = state.fontScale;
+  let idx = FONT_STEPS.findIndex(v => Math.abs(v - cur) < 0.001);
+  if(idx < 0) idx = FONT_STEPS.reduce((best,v,i) => Math.abs(v-cur) < Math.abs(FONT_STEPS[best]-cur) ? i : best, 0);
+  const next = FONT_STEPS[clamp(idx + dir, 0, FONT_STEPS.length - 1)];
+  if(Math.abs(next - cur) < 0.001) return toast(dir > 0 ? 'Largest text size.' : 'Smallest text size.');
+  applyFont(next);
+}
+
+// ---------------------------------------------------------------- overlays
+function applyOverlays(){
+  const ids = {districts:'ovDistricts', borders:'ovBorders', fata:'ovFata', pins:'ovPins', heat:'ovHeat', neighbours:'ovNeighbours'};
+  Object.entries(ids).forEach(([key,id]) => { const el = $('#' + id); if(el) el.checked = !!state.ov[key]; });
+  if(dLayer){ state.ov.districts ? dLayer.addTo(map) : map.removeLayer(dLayer); }
+  if(fataLayer){ state.ov.fata ? fataLayer.addTo(map) : map.removeLayer(fataLayer); }
+  if(neighbourLayer){ state.ov.neighbours ? neighbourLayer.addTo(map) : map.removeLayer(neighbourLayer); }
+  buildPins();
+  buildHeat();
+  renderLabels();
+  $$('.layer').forEach(l => { const i = l.querySelector('input'); l.classList.toggle('on', !!(i && i.checked)); });
+  const n = Object.values(state.ov).filter(Boolean).length;
+  $('#overlayCount').textContent = n + ' on';
+  renderLegend();
+}
+
+function setAllLayers(on){
+  Object.keys(state.ov).forEach(k => { state.ov[k] = on; });
+  applyOverlays();
+  toast(on ? 'All six layers on.' : 'Panel layers off — basemap only.');
+}
+
+// ---------------------------------------------------------------- controls
+function bindControls(){
+  buildYearChips();
+
+  $('#yearRange').addEventListener('input', e => selectSpan(+e.target.value));
+  $('#yrPrev').addEventListener('click', () => {
+    if(state.spanMode && state.years.size > 1) selectSpan(state.spanEnd - 1);
+    else selectOnlyYear(state.year - 1);
+  });
+  $('#yrNext').addEventListener('click', () => {
+    if(state.spanMode && state.years.size > 1) selectSpan(state.spanEnd + 1);
+    else selectOnlyYear(state.year + 1);
+  });
+  $('#btnYearsAll').addEventListener('click', () => {
+    state.years = new Set(YEARS); state.spanMode = true; state.spanEnd = 2026; state.year = 2026; state.lastYearClick = 2026;
+    render();
+    toast('All 27 years selected.');
+  });
+  $('#btnYearsClear').addEventListener('click', () => selectOnlyYear(Math.max(...state.years)));
+  $('#btnLatest').addEventListener('click', () => selectOnlyYear(2026));
+  $('#btnLast5').addEventListener('click', () => setYears(YEARS.slice(-5)));
+  $('#btnPlay').addEventListener('click', togglePlay);
+
+  const ovMap = {ovDistricts:'districts', ovBorders:'borders', ovFata:'fata', ovPins:'pins', ovHeat:'heat', ovNeighbours:'neighbours'};
+  Object.entries(ovMap).forEach(([id, key]) => {
+    const el = $('#' + id);
+    el.addEventListener('change', () => { state.ov[key] = el.checked; applyOverlays(); });
+  });
+  applyOverlays();
+  $('#btnLayersAll').addEventListener('click', () => setAllLayers(true));
+  $('#btnLayersMap').addEventListener('click', () => setAllLayers(false));
+
+  $('#shadeMetric').addEventListener('change', e => { state.shade = e.target.value; render(); });
+  $('#basemap').addEventListener('change', e => setBasemap(e.target.value));
+
+  $('#btnAllSeries').addEventListener('click', () => {
+    if(state.series.size === SERIES.length) state.series = new Set(['fatalities','incidents','major','suicide']);
+    else state.series = new Set(SERIES.map(s => s.id));
+    buildSeriesToggles(); render();
+  });
+  $('#btnAllCats').addEventListener('click', toggleAllCats);
+  $$('#sevRow button').forEach(b => b.addEventListener('click', () => {
+    $$('#sevRow button').forEach(x => x.classList.toggle('active', x === b));
+    state.minKilled = +b.dataset.min;
+    buildPins();
+  }));
+  $$('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+
+  $('#btnSync').addEventListener('click', syncNow);
+  $('#syncChip').addEventListener('click', () => { if(!state.server) setTab('sources'); });
+  $('#btnAbout').addEventListener('click', () => { renderAbout(); $('#aboutModal').hidden = false; });
+  $$('#aboutModal [data-close]').forEach(b => b.addEventListener('click', () => { $('#aboutModal').hidden = true; }));
+
+  // export menu
+  const menu = $('#exportMenu');
+  $('#btnExport').addEventListener('click', e => {
+    e.stopPropagation();
+    menu.hidden = !menu.hidden;
+    $('#btnExport').setAttribute('aria-expanded', String(!menu.hidden));
+  });
+  $$('#exportMenu [data-export]').forEach(b => b.addEventListener('click', () => {
+    menu.hidden = true;
+    $('#btnExport').setAttribute('aria-expanded', 'false');
+    runExport(b.dataset.export);
+  }));
+  document.addEventListener('click', e => {
+    if(!menu.hidden && !menu.contains(e.target) && e.target !== $('#btnExport')) menu.hidden = true;
+  });
+
+  // layout + type
+  $('#layoutSel').addEventListener('change', e => { applyLayout(e.target.value); toast('Layout: ' + e.target.options[e.target.selectedIndex].text.replace('Layout · ','')); });
+  $('#btnExitMapOnly').addEventListener('click', () => applyLayout('full'));
+  $('#fsDown').addEventListener('click', () => stepFont(-1));
+  $('#fsUp').addEventListener('click', () => stepFont(1));
+
+  $('#tlToggle').addEventListener('click', () => {
+    state.tlCollapsed = !state.tlCollapsed;
+    $('#timeline').classList.toggle('collapsed', state.tlCollapsed);
+    $('#tlToggle').textContent = state.tlCollapsed ? 'Show' : 'Hide';
+    $('#tlToggle').setAttribute('aria-expanded', String(!state.tlCollapsed));
+    renderTimeline();
+  });
+  $('#tlLabels').addEventListener('change', e => { state.tlLabels = e.target.checked; renderTimeline(); });
+
+  $('#btnMobileRail').addEventListener('click', () => document.body.classList.toggle('rail-open'));
+  $('#btnMobileInsp').addEventListener('click', () => document.body.classList.toggle('insp-open'));
+  $('#btnCloseInsp').addEventListener('click', () => document.body.classList.remove('insp-open'));
+  $('#scrim').addEventListener('click', () => document.body.classList.remove('rail-open','insp-open'));
+
+  window.addEventListener('resize', debounce(() => { renderTimeline(); renderLabels(); }, 160));
+  window.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){ $('#aboutModal').hidden = true; menu.hidden = true; document.body.classList.remove('insp-open','rail-open'); }
+    if(e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); $('#yrPrev').click(); }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); $('#yrNext').click(); }
+    if(e.key.toLowerCase() === 'm'){ e.preventDefault(); applyLayout(state.layout === 'maponly' ? 'full' : 'maponly'); }
+  });
+
+  setInterval(checkStatus, 60000);
 }
 
 function renderAbout(){
@@ -1283,75 +1671,10 @@ function renderAbout(){
     '</ul>' +
     '<h3>Basemaps</h3>' +
     '<p>The “Google Maps” options draw Google tile imagery directly in Leaflet (the <code>mt0–mt3.google.com/vt</code> tile service). That is the familiar Google cartography, but it is not the paid Google Maps JavaScript API, so it carries no key quota and can be rate-limited; if tiles fail the atlas switches itself to OpenStreetMap. The offline edition ships a drawn vector basemap (district outlines, province boundary, neighbours, graticule and labels) because imagery cannot be embedded.</p>' +
-    '<h3>Controls</h3>' +
-    '<p>Every overlay, every SATP series and every incident category can be switched on or off. Choose a single year or the cumulative span, play the years, click a district for its record, or click any cell of the year matrix. The layout is a fixed grid — the rail, legend, map, timeline and inspector each own their space, so no panel ever covers a figure.</p>';
-}
-
-function bindControls(){
-  $('#yearRange').addEventListener('input', e => setYear(+e.target.value, true));
-  $('#yrPrev').addEventListener('click', () => setYear(state.year - 1, true));
-  $('#yrNext').addEventListener('click', () => setYear(state.year + 1, true));
-  $('#btnAllYears').addEventListener('click', () => { state.allYears = !state.allYears; setYear(state.year, true); });
-  $('#btnLatest').addEventListener('click', () => setYear(2026, false));
-  $('#btnPlay').addEventListener('click', togglePlay);
-
-  const ovMap = {ovDistricts:'districts', ovBorders:'borders', ovFata:'fata', ovPins:'pins', ovHeat:'heat', ovNeighbours:'neighbours'};
-  Object.entries(ovMap).forEach(([id, key]) => {
-    const el = $('#' + id);
-    el.addEventListener('change', () => {
-      state.ov[key] = el.checked;
-      if(key === 'districts'){ el.checked ? dLayer.addTo(map) : map.removeLayer(dLayer); }
-      if(key === 'fata'){ if(fataLayer){ el.checked ? fataLayer.addTo(map) : map.removeLayer(fataLayer); } }
-      if(key === 'neighbours'){ if(neighbourLayer){ el.checked ? neighbourLayer.addTo(map) : map.removeLayer(neighbourLayer); } }
-      if(key === 'pins') buildPins();
-      if(key === 'heat') buildHeat();
-      if(key === 'borders') renderLabels();
-      $('#overlayCount').textContent = Object.values(state.ov).filter(Boolean).length + ' on';
-      renderLegend();
-    });
-  });
-  $('#overlayCount').textContent = Object.values(state.ov).filter(Boolean).length + ' on';
-
-  $('#shadeMetric').addEventListener('change', e => { state.shade = e.target.value; render(); });
-  $('#basemap').addEventListener('change', e => setBasemap(e.target.value));
-  $('#btnAllSeries').addEventListener('click', () => {
-    if(state.series.size === SERIES.length) state.series = new Set(['fatalities','incidents','major','suicide']);
-    else state.series = new Set(SERIES.map(s => s.id));
-    buildSeriesToggles(); render();
-  });
-  $('#btnAllCats').addEventListener('click', toggleAllCats);
-  $$('#sevRow button').forEach(b => b.addEventListener('click', () => {
-    $$('#sevRow button').forEach(x => x.classList.toggle('active', x === b));
-    state.minKilled = +b.dataset.min;
-    buildPins();
-  }));
-  $$('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
-
-  $('#btnSync').addEventListener('click', syncNow);
-  $('#syncChip').addEventListener('click', () => { if(!state.server) setTab('sources'); });
-  $('#btnExport').addEventListener('click', exportCsv);
-  $('#btnAbout').addEventListener('click', () => { renderAbout(); $('#aboutModal').hidden = false; });
-  $$('#aboutModal [data-close]').forEach(b => b.addEventListener('click', () => { $('#aboutModal').hidden = true; }));
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ $('#aboutModal').hidden = true; document.body.classList.remove('insp-open','rail-open'); } });
-
-  $('#tlToggle').addEventListener('click', () => {
-    state.tlCollapsed = !state.tlCollapsed;
-    $('#timeline').classList.toggle('collapsed', state.tlCollapsed);
-    $('#tlToggle').textContent = state.tlCollapsed ? 'Show' : 'Hide';
-    $('#tlToggle').setAttribute('aria-expanded', String(!state.tlCollapsed));
-    renderTimeline();
-  });
-  $('#tlLabels').addEventListener('change', e => { state.tlLabels = e.target.checked; renderTimeline(); });
-
-  $('#btnMobileRail').addEventListener('click', () => document.body.classList.toggle('rail-open'));
-  $('#btnMobileInsp').addEventListener('click', () => document.body.classList.toggle('insp-open'));
-  $('#btnCloseInsp').addEventListener('click', () => document.body.classList.remove('insp-open'));
-  $('#scrim').addEventListener('click', () => document.body.classList.remove('rail-open','insp-open'));
-
-  window.addEventListener('resize', debounce(() => { renderTimeline(); renderLabels(); }, 160));
-  window.addEventListener('hashchange', () => { /* keep it lightweight: no full re-read */ });
-
-  setInterval(checkStatus, 60000);
+    '<h3>Years, layers and layouts</h3>' +
+    '<p>The year grid is a multi-select: click any years to add or remove them, shift-click to take a range, or drag the slider for a span from 2000. Every figure, shade, matrix cell and timeline bar follows the selection, and selected years are marked in yellow. The six map layers are independent switches; <b>All layers</b> and <b>Map only</b> set them in one go. Four layouts are available — full, map + filters, map + details, and map only, which hides every panel except the map. Text size is adjustable from 80% to 145% with A− / A+, and the whole interface is set in Candara. Export offers the yearly table, the visible incidents, the current view as JSON, the timeline as SVG, a print/PDF pass and a share link.</p>' +
+    '<h3>Selection</h3>' +
+    '<p>A district you click is outlined in red at 2 px and brought to the front so its record stays visible against its neighbours.</p>';
 }
 
 // ---------------------------------------------------------------- boot
@@ -1388,14 +1711,30 @@ async function boot(){
 
     // restore a shared view
     const q = new URLSearchParams((location.hash || '').slice(1));
-    const y = +q.get('y');
-    if(y >= 2000 && y <= 2026) state.year = y;
-    if(q.get('all') === '0') state.allYears = false;
+    const ys = q.get('ys');
+    const hashYears = ys === 'all' ? YEARS.slice() : (ys ? decodeYears(ys) : []);
+    if(hashYears.length){
+      state.years = new Set(hashYears);
+      state.spanEnd = Math.max(...hashYears);
+      state.year = state.spanEnd;
+      state.lastYearClick = state.year;
+      state.spanMode = isContiguous();
+    }
     if(q.get('d') && state.districtByName[q.get('d')]) state.district = q.get('d');
     if(q.get('tab')) state.tab = q.get('tab');
     $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === state.tab));
 
-    setYear(state.year, true);
+    let savedFont = 1, savedLayout = 'full';
+    try{
+      savedFont = parseFloat(localStorage.getItem('kp-font')) || 1;
+      savedLayout = localStorage.getItem('kp-layout') || 'full';
+    }catch(e){}
+    if(q.get('fs')) savedFont = parseFloat(q.get('fs')) || savedFont;
+    if(q.get('lay')) savedLayout = q.get('lay');
+    applyFont(savedFont);
+    applyLayout(savedLayout);
+
+    render();
     if(state.district) selectDistrict(state.district);
 
     // load the optional incident layer after first paint
@@ -1403,7 +1742,7 @@ async function boot(){
     checkStatus();
   }catch(err){
     console.error(err);
-    $('#map').innerHTML = '<div style="padding:40px;color:#c9d7e2;font:13px/1.7 system-ui;max-width:520px">' +
+    $('#map').innerHTML = '<div style="padding:2.5rem;color:#2b4635;font:.8rem/1.7 Candara,Segoe UI,sans-serif;max-width:32rem">' +
       '<b>Could not load the atlas data.</b><br>Serve this folder over HTTP — <code>python3 serve.py</code> — or open the single-file offline edition.</div>';
   }
 }

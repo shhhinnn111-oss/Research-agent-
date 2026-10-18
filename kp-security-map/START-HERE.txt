@@ -10,6 +10,20 @@ killed, 2000 to 14 October 2026.
 
 All 35 districts are drawn, including the seven erstwhile FATA agencies.
 
+The interface is light, layered and set in Candara, with Pakistan green for the
+structure and yellow for the figures that matter. Full controls:
+
+  - Years are multi-select. Click years in the grid, shift-click for a range,
+    or drag the slider for a span. All/Clear/Latest/Last 5 are one click each.
+  - Six map layers toggle independently (district shading, borders and labels,
+    erstwhile FATA, incident pins, density heat, neighbouring regions).
+  - Four layouts, including "map only", which hides every panel except the map
+    (press M to return).
+  - A- and A+ change the text size from 80% to 145%.
+  - Export writes the yearly table, the visible incidents, a JSON view, the
+    timeline as SVG, a print/PDF pass, or a share link.
+  - A district you click is outlined in red at 2 px.
+
 
 TWO WAYS TO USE IT
 ------------------

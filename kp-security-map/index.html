@@ -8,22 +8,22 @@
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
+<body class="theme-light layout-full">
 
 <header class="topbar">
   <div class="brand">
     <div class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 40 40"><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.5 20.2l5 5L28 14.8" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+      <svg viewBox="0 0 40 40"><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="currentColor" opacity=".14"/><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.5 20.2l5 5L28 14.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
     <div class="brand-text">
-      <span class="eyebrow">South Asia Terrorism Portal · live data</span>
+      <span class="eyebrow">SATP · live datasheets</span>
       <h1>Khyber Pakhtunkhwa Security Atlas</h1>
     </div>
   </div>
 
   <div class="headline" id="headline">
-    <div class="hs"><span class="hs-num" id="hsIncidents">—</span><span class="hs-lab" id="hsIncidentsLab">incidents</span></div>
-    <div class="hs"><span class="hs-num" id="hsKilled">—</span><span class="hs-lab">killed</span></div>
+    <div class="hs"><span class="hs-num hl" id="hsIncidents">—</span><span class="hs-lab" id="hsIncidentsLab">incidents</span></div>
+    <div class="hs"><span class="hs-num hl" id="hsKilled">—</span><span class="hs-lab">killed</span></div>
     <div class="hs"><span class="hs-num" id="hsCiv">—</span><span class="hs-lab">civilians</span></div>
     <div class="hs"><span class="hs-num" id="hsSec">—</span><span class="hs-lab">security forces</span></div>
     <div class="hs"><span class="hs-num" id="hsMil">—</span><span class="hs-lab">militants</span></div>
@@ -33,15 +33,40 @@
     <button class="sync-chip" id="syncChip" type="button" title="Data status">
       <i class="dot" id="syncDot"></i><span id="syncText">Loading…</span>
     </button>
-    <button class="btn sync" id="btnSync" type="button">Sync SATP</button>
-    <button class="btn ghost" id="btnExport" type="button">CSV</button>
-    <button class="btn ghost icon-only" id="btnMobileRail" type="button" aria-label="Filters">
+
+    <div class="fontstep" role="group" aria-label="Text size">
+      <button id="fsDown" type="button" title="Smaller text" aria-label="Smaller text">A−</button>
+      <span id="fsVal" aria-live="polite">100%</span>
+      <button id="fsUp" type="button" title="Larger text" aria-label="Larger text">A+</button>
+    </div>
+
+    <div class="menu-wrap">
+      <button class="btn" id="btnExport" type="button" aria-haspopup="menu" aria-expanded="false">Export <span class="caret">▾</span></button>
+      <div class="menu" id="exportMenu" role="menu" hidden>
+        <button type="button" role="menuitem" data-export="csv"><b>Yearly SATP table</b><span>Every series, one row per year · CSV</span></button>
+        <button type="button" role="menuitem" data-export="incidents"><b>Visible incidents</b><span>Only what the filters show · CSV</span></button>
+        <button type="button" role="menuitem" data-export="json"><b>Current view</b><span>Years, totals, filters, district · JSON</span></button>
+        <button type="button" role="menuitem" data-export="svg"><b>Timeline chart</b><span>The drawn chart as vector · SVG</span></button>
+        <button type="button" role="menuitem" data-export="print"><b>Print or save PDF</b><span>Opens the print dialogue</span></button>
+        <button type="button" role="menuitem" data-export="link"><b>Copy share link</b><span>Restores this exact view</span></button>
+      </div>
+    </div>
+
+    <select id="layoutSel" class="select compact" aria-label="Layout" title="Map only hides every panel except the map">
+      <option value="full">Layout · full</option>
+      <option value="wide">Layout · map + filters</option>
+      <option value="focus">Layout · map + details</option>
+      <option value="maponly">Layout · map only</option>
+    </select>
+
+    <button class="btn ghost" id="btnSync" type="button">Sync SATP</button>
+    <button class="btn ghost" id="btnAbout" type="button">Method</button>
+    <button class="btn ghost icon-only" id="btnMobileRail" type="button" aria-label="Filters" title="Filters">
       <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
     </button>
-    <button class="btn ghost icon-only" id="btnMobileInsp" type="button" aria-label="Details">
+    <button class="btn ghost icon-only" id="btnMobileInsp" type="button" aria-label="Details" title="Details">
       <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
     </button>
-    <button class="btn ghost" id="btnAbout" type="button">Method</button>
   </div>
 </header>
 
@@ -54,29 +79,49 @@
       <section class="block period">
         <div class="block-head">
           <h2>Period</h2>
-          <button class="link" id="btnAllYears" type="button" aria-pressed="true">All years</button>
+          <div class="head-links">
+            <button class="link" id="btnYearsAll" type="button" title="Select all 27 years">All</button>
+            <button class="link" id="btnYearsClear" type="button" title="Keep only the latest selected year">Clear</button>
+          </div>
         </div>
+
         <div class="year-display">
           <button class="yr-step" id="yrPrev" type="button" aria-label="Previous year">‹</button>
-          <div class="yr-main"><span id="yearBig">2026</span><small id="yearSub">cumulative · 2000–2026</small></div>
+          <div class="yr-main">
+            <span id="yearBig">2000–26</span>
+            <small id="yearSub">all years · 27</small>
+          </div>
           <button class="yr-step" id="yrNext" type="button" aria-label="Next year">›</button>
         </div>
-        <input type="range" id="yearRange" min="2000" max="2026" step="1" value="2026" aria-label="Year">
+
+        <div class="year-chips" id="yearChips" role="group" aria-label="Select years"></div>
+        <p class="note tiny">Click to add or remove a year. Shift-click selects a range. The dashed slider sets a span from 2000.</p>
+
+        <input type="range" id="yearRange" min="2000" max="2026" step="1" value="2026" aria-label="Span up to year">
         <div class="year-scale"><span>2000</span><span>2009 peak</span><span>2026</span></div>
+
         <div class="row gap">
           <button class="btn small" id="btnPlay" type="button">▶ Play years</button>
           <button class="btn small ghost" id="btnLatest" type="button">Latest</button>
+          <button class="btn small ghost" id="btnLast5" type="button" title="Select 2022–2026">Last 5</button>
         </div>
       </section>
 
       <section class="block">
-        <div class="block-head"><h2>Map overlays</h2><span class="hint" id="overlayCount">6 on</span></div>
-        <label class="check"><input type="checkbox" id="ovDistricts" checked><span class="sw sw-district"></span><span class="txt">District shading<small>SATP or GTD intensity</small></span></label>
-        <label class="check"><input type="checkbox" id="ovBorders" checked><span class="sw sw-border"></span><span class="txt">Boundaries &amp; labels<small>District names and values</small></span></label>
-        <label class="check"><input type="checkbox" id="ovFata" checked><span class="sw sw-fata"></span><span class="txt">Erstwhile FATA<small>Hatched, merged in 2018</small></span></label>
-        <label class="check"><input type="checkbox" id="ovPins" checked><span class="sw sw-pin"></span><span class="txt">Incident pins<small>GTD records, 2004–2020</small></span></label>
-        <label class="check"><input type="checkbox" id="ovHeat"><span class="sw sw-heat"></span><span class="txt">Density heat<small>Smoothed incident surface</small></span></label>
-        <label class="check"><input type="checkbox" id="ovNeighbours"><span class="sw sw-neigh"></span><span class="txt">Neighbouring regions<small>Afghanistan, Punjab, Sindh…</small></span></label>
+        <div class="block-head"><h2>Map layers</h2><span class="hint" id="overlayCount">4 on</span></div>
+        <p class="note tiny">Any combination can be on at once.</p>
+        <div class="layer-grid">
+          <label class="layer" data-layer="districts"><input type="checkbox" id="ovDistricts" checked><span class="layer-box"><i class="sw sw-district"></i></span><span class="txt">District shading</span></label>
+          <label class="layer" data-layer="borders"><input type="checkbox" id="ovBorders" checked><span class="layer-box"><i class="sw sw-border"></i></span><span class="txt">Boundaries &amp; labels</span></label>
+          <label class="layer" data-layer="fata"><input type="checkbox" id="ovFata" checked><span class="layer-box"><i class="sw sw-fata"></i></span><span class="txt">Erstwhile FATA</span></label>
+          <label class="layer" data-layer="pins"><input type="checkbox" id="ovPins" checked><span class="layer-box"><i class="sw sw-pin"></i></span><span class="txt">Incident pins</span></label>
+          <label class="layer" data-layer="heat"><input type="checkbox" id="ovHeat"><span class="layer-box"><i class="sw sw-heat"></i></span><span class="txt">Density heat</span></label>
+          <label class="layer" data-layer="neighbours"><input type="checkbox" id="ovNeighbours"><span class="layer-box"><i class="sw sw-neigh"></i></span><span class="txt">Neighbouring regions</span></label>
+        </div>
+        <div class="row gap tight">
+          <button class="btn tiny ghost" id="btnLayersAll" type="button">All layers</button>
+          <button class="btn tiny ghost" id="btnLayersMap" type="button">Map only</button>
+        </div>
         <div class="select-row">
           <label for="shadeMetric">Shade districts by</label>
           <select id="shadeMetric" class="select">
@@ -106,13 +151,13 @@
 
       <section class="block">
         <div class="block-head"><h2>SATP series</h2><button class="link" id="btnAllSeries" type="button">All</button></div>
-        <p class="note">Show or hide each dataset in the charts, the year matrix and the timeline.</p>
+        <p class="note tiny">Each series is an independent switch for the charts, year matrix and timeline.</p>
         <div id="seriesToggles" class="series-toggles"></div>
       </section>
 
       <section class="block">
         <div class="block-head"><h2>Incident categories</h2><button class="link" id="btnAllCats" type="button">All</button></div>
-        <p class="note">Filters the GTD incident pins only — the SATP datasheets publish totals, not per-attack categories.</p>
+        <p class="note tiny">Filters the GTD incident pins only — SATP publishes totals, not per-attack categories.</p>
         <div id="catToggles" class="cat-toggles"></div>
       </section>
 
@@ -146,12 +191,14 @@
       <div class="map-tag" id="mapTag">SATP fatalities · cumulative</div>
       <div class="map-scale-note" id="mapScaleNote"></div>
       <div class="credit" id="credit">Basemap © Google</div>
+      <button class="maponly-exit" id="btnExitMapOnly" type="button">▣ Show panels</button>
     </div>
     <div class="timeline" id="timeline">
       <div class="tl-head">
         <div class="tl-title">Yearly record <span id="tlRange">2000–2026</span></div>
         <div class="tl-legend" id="tlLegend"></div>
         <div class="tl-tools">
+          <span class="tl-selected" id="tlSelected">27/27 years</span>
           <label class="tiny-check"><input type="checkbox" id="tlLabels" checked> peaks</label>
           <button class="btn tiny ghost" id="tlToggle" type="button" aria-expanded="true">Hide</button>
         </div>

@@ -672,467 +672,744 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 
 /* ============================================================
-   Khyber Pakhtunkhwa Security Atlas — SATP edition
-   Layout rule #1: nothing floats over data. The page is a grid;
-   the map, legend, timeline, rail and inspector each own a cell.
+   Khyber Pakhtunkhwa Security Atlas — light 3D edition
+   Candara · Pakistan green · yellow highlights · flat grid,
+   nothing floats over a figure. Type scales with --ui so the
+   A− / A+ control resizes every panel, chart label and table.
    ============================================================ */
 :root{
-  --bg:#070c11;
-  --bg2:#0a1117;
-  --panel:#0c141b;
-  --panel2:#101a22;
-  --line:#1c2a34;
-  --line2:#263945;
-  --text:#e9f0f6;
-  --muted:#90a5b5;
-  --dim:#61798a;
-  --accent:#f0a35e;
-  --accent2:#f7c78f;
-  --red:#e0533d;
-  --violet:#a78bfa;
-  --teal:#43c6b7;
-  --blue:#5aa9e6;
-  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
-  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  --top:60px;
+  --ui:1;
+
+  --paper:#eef4ec;
+  --paper2:#e4ede2;
+  --card:#ffffff;
+  --card2:#fbfdf8;
+  --line:#d6e3d3;
+  --line2:#c2d5c0;
+  --line3:#aec7ad;
+
+  --ink:#10281a;
+  --ink2:#2b4635;
+  --muted:#5c7767;
+  --dim:#7f978a;
+
+  --green:#0d6b3f;
+  --green-d:#074b2b;
+  --green-2:#2f8f5b;
+  --green-l:#e6f3ea;
+  --green-ll:#f0f8f1;
+  --pakistan:#01411C;
+
+  --yellow:#ffcf33;
+  --yellow-2:#ffe27a;
+  --yellow-l:#fff6cf;
+  --yellow-d:#7d5f00;
+
+  --red:#d92332;
+  --red-l:#fdecec;
+
+  --accent:var(--green);
+  --accent2:var(--yellow);
+  --serif:Candara,"Candara Light","Segoe UI",Optima,"Trebuchet MS",sans-serif;
+  --sans:Candara,"Candara Light","Segoe UI",Optima,"Trebuchet MS",sans-serif;
+  --mono:Candara,"Segoe UI",Optima,"Trebuchet MS",sans-serif;
+
+  --sh1:inset 0 1px 0 #fff,0 1px 2px rgba(16,60,34,.10),0 8px 16px -12px rgba(16,60,34,.55);
+  --sh2:inset 0 1px 0 #fff,0 2px 4px rgba(16,60,34,.12),0 18px 32px -18px rgba(16,60,34,.55);
+  --sh3:inset 0 1px 0 #fff,0 3px 6px rgba(16,60,34,.14),0 28px 48px -22px rgba(16,60,34,.6);
+  --shin:inset 0 2px 5px rgba(16,60,34,.16);
+  --lift:translateY(-1px);
+  --top:4.1rem;
 }
+
 *{box-sizing:border-box}
-html,body{height:100%}
+html{font-size:calc(16px * var(--ui));height:100%}
 body{
-  margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
-  font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden;
+  margin:0;height:100%;overflow:hidden;
+  background:
+    radial-gradient(1200px 600px at 15% -10%,#ffffff,transparent 70%),
+    radial-gradient(900px 500px at 100% 0%,#e8f3e6,transparent 65%),
+    var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:.8125rem;line-height:1.45;
+  -webkit-font-smoothing:antialiased;
 }
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-a{color:var(--accent2);text-decoration:none}
+a{color:var(--green);text-decoration:none}
 a:hover{text-decoration:underline}
-h1,h2,h3,h4{margin:0;font-weight:600}
-::selection{background:rgba(240,163,94,.28)}
-*{scrollbar-width:thin;scrollbar-color:#2a3c49 transparent}
-*::-webkit-scrollbar{width:8px;height:8px}
-*::-webkit-scrollbar-thumb{background:#263845;border-radius:8px}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:.005em}
+::selection{background:var(--yellow-2);color:var(--ink)}
+*{scrollbar-width:thin;scrollbar-color:#b9cfb8 transparent}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-thumb{background:#bed2bd;border-radius:9px;border:2px solid transparent;background-clip:content-box}
 *::-webkit-scrollbar-track{background:transparent}
+
+/* yellow marker for the figures that matter */
+.hl{
+  background:linear-gradient(180deg,var(--yellow-2),var(--yellow));
+  box-shadow:0 1px 0 #e9b800,0 3px 10px -4px rgba(233,184,0,.85);
+  border-radius:.25rem;padding:.02rem .28rem;color:#2f2500!important;
+}
 
 /* ====================== TOP BAR ====================== */
 .topbar{
-  height:var(--top);display:flex;align-items:center;gap:18px;padding:0 14px 0 16px;
-  border-bottom:1px solid var(--line);position:relative;z-index:700;
-  background:radial-gradient(900px 90px at 8% 0%,rgba(240,163,94,.08),transparent 70%),
-             linear-gradient(180deg,#0d151c,#090f14);
+  height:var(--top);display:flex;align-items:center;gap:1rem;padding:0 .75rem 0 .9rem;
+  position:relative;z-index:700;
+  background:linear-gradient(180deg,#ffffff 0%,#f4faf2 60%,#eaf3e8 100%);
+  border-top:3px solid var(--pakistan);
+  border-bottom:1px solid var(--line2);
+  box-shadow:0 2px 0 #fff inset,0 10px 22px -18px rgba(16,60,34,.75);
 }
-.brand{display:flex;align-items:center;gap:10px;flex:none}
-.brand-mark{width:32px;height:32px;color:var(--accent);flex:none}
-.brand-mark svg{width:100%;height:100%}
+.brand{display:flex;align-items:center;gap:.55rem;flex:none}
+.brand-mark{
+  width:2.1rem;height:2.1rem;color:var(--green);flex:none;border-radius:.55rem;
+  display:grid;place-items:center;
+  background:linear-gradient(180deg,#fff,#eaf4e8);
+  box-shadow:var(--sh1);border:1px solid var(--line2);
+}
+.brand-mark svg{width:1.65rem;height:1.65rem}
 .brand-text{display:flex;flex-direction:column;line-height:1.05}
-.brand-text .eyebrow{color:var(--dim);font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
-.brand-text h1{font-family:var(--serif);font-size:16.5px;letter-spacing:.01em;white-space:nowrap}
-.headline{display:flex;gap:20px;align-items:center;flex:1;min-width:0;overflow:hidden}
+.brand-text .eyebrow{color:var(--green-2);font-size:.52rem;letter-spacing:.19em;text-transform:uppercase;font-weight:700}
+.brand-text h1{font-size:1.02rem;letter-spacing:.005em;white-space:nowrap;color:var(--pakistan)}
+
+.headline{display:flex;gap:1rem;align-items:center;flex:1;min-width:0;overflow:hidden}
 .hs{display:flex;flex-direction:column;line-height:1.02;white-space:nowrap}
-.hs-num{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
-.hs-lab{font-size:7.8px;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);margin-top:4px}
-.top-actions{display:flex;align-items:center;gap:7px;flex:none}
+.hs-num{font-size:.96rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);display:block;width:max-content}
+.hs-lab{font-size:.5rem;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin-top:.22rem;font-weight:600}
+.top-actions{display:flex;align-items:center;gap:.4rem;flex:none}
+
+/* 3D buttons */
 .btn{
-  border:1px solid var(--line2);background:#101a22;color:var(--text);border-radius:7px;
-  padding:6px 10px;font-size:11px;line-height:1.2;transition:.15s;white-space:nowrap;
+  border:1px solid var(--line3);
+  background:linear-gradient(180deg,#ffffff,#edf5eb);
+  color:var(--green-d);border-radius:.45rem;
+  padding:.34rem .6rem;font-size:.68rem;line-height:1.15;white-space:nowrap;
+  box-shadow:0 2px 0 #b9cfb8,0 7px 14px -10px rgba(16,60,34,.7),inset 0 1px 0 #fff;
+  transition:transform .06s,box-shadow .12s,background .12s;
 }
-.btn:hover{border-color:#3b5464;background:#15232d}
-.btn.ghost{background:transparent}
-.btn.sync{background:rgba(240,163,94,.13);border-color:rgba(240,163,94,.45);color:var(--accent2)}
-.btn.sync:hover{background:rgba(240,163,94,.2)}
-.btn.sync[disabled]{opacity:.5;cursor:default}
-.btn.tiny{padding:3px 7px;font-size:10px;border-radius:5px}
-.btn.icon-only{padding:6px;width:30px;height:30px;display:grid;place-items:center}
-.btn.icon-only svg{width:15px;height:15px}
+.btn:hover{background:linear-gradient(180deg,#fff,#e4f1e2);box-shadow:0 2px 0 #a9c3a8,0 10px 18px -10px rgba(16,60,34,.75),inset 0 1px 0 #fff}
+.btn:active{transform:translateY(2px);box-shadow:0 0 0 #b9cfb8,inset 0 2px 6px rgba(16,60,34,.18)}
+.btn.ghost{background:linear-gradient(180deg,#fff,#f6fbf4)}
+.btn.sync{
+  background:linear-gradient(180deg,var(--yellow-2),var(--yellow));
+  border-color:#e0b41b;color:#3a2c00;font-weight:700;
+  box-shadow:0 2px 0 #caa218,0 8px 16px -9px rgba(202,162,24,.9),inset 0 1px 0 #fff8d6;
+}
+.btn.sync:hover{background:linear-gradient(180deg,#ffe98f,#ffd23f)}
+.btn.sync[disabled]{opacity:.55;cursor:default;transform:none;box-shadow:0 2px 0 #caa218}
+.btn.tiny{padding:.2rem .45rem;font-size:.62rem;border-radius:.35rem}
+.btn.icon-only{padding:.32rem;width:1.9rem;height:1.9rem;display:grid;place-items:center}
+.btn.icon-only svg{width:1rem;height:1rem}
+#btnMobileRail,#btnMobileInsp{display:none}
+.btn.small{padding:.3rem .5rem;font-size:.64rem}
+.select{
+  border:1px solid var(--line3);background:linear-gradient(180deg,#fff,#f1f7ef);
+  border-radius:.42rem;padding:.28rem .4rem;font-size:.66rem;color:var(--ink);
+  box-shadow:var(--shin);width:100%;
+}
+.select.compact{width:auto;font-size:.66rem}
+.select:focus{outline:2px solid var(--yellow);outline-offset:1px}
+
 .sync-chip{
-  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
-  background:#0a1218;border-radius:20px;padding:4px 9px;font-size:10px;color:var(--muted);
-  max-width:270px;overflow:hidden;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--line2);
+  background:linear-gradient(180deg,#fff,#f2f8f0);border-radius:2rem;padding:.24rem .55rem;
+  font-size:.6rem;color:var(--muted);max-width:17rem;overflow:hidden;white-space:nowrap;
+  box-shadow:var(--sh1);
 }
-.sync-chip:hover{border-color:var(--line2)}
-.sync-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex:none}
-.sync-chip.live .dot{background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.12)}
-.sync-chip.stale .dot{background:var(--accent)}
+.sync-chip:hover{border-color:var(--line3);color:var(--ink2)}
+.sync-chip .dot{width:.45rem;height:.45rem;border-radius:50%;background:var(--dim);flex:none}
+.sync-chip.live .dot{background:#18a05a;box-shadow:0 0 0 3px rgba(24,160,90,.16)}
+.sync-chip.stale .dot{background:#e0a800}
 .sync-chip.err .dot{background:var(--red)}
-.sync-chip.busy .dot{background:var(--blue);animation:pulse 1s infinite}
-.sync-chip.offline .dot{background:#8fb3c9;box-shadow:0 0 0 3px rgba(143,179,201,.12)}
-@keyframes pulse{50%{opacity:.35}}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.mobile-only{display:none!important}
+.sync-chip.busy .dot{background:var(--green-2);animation:pulse 1s infinite}
+.sync-chip.offline .dot{background:#7f97a8;box-shadow:0 0 0 3px rgba(127,151,168,.16)}
+@keyframes pulse{50%{opacity:.3}}
+
+/* font size stepper */
+.fontstep{
+  display:inline-flex;align-items:center;gap:.1rem;border:1px solid var(--line2);border-radius:.45rem;
+  background:linear-gradient(180deg,#fff,#f1f7ef);box-shadow:var(--sh1);padding:.1rem;
+}
+.fontstep button{border:none;background:none;color:var(--green-d);font-size:.62rem;font-weight:700;padding:.2rem .35rem;border-radius:.3rem}
+.fontstep button:hover{background:var(--yellow-l)}
+.fontstep span{font-size:.52rem;color:var(--dim);min-width:2.2rem;text-align:center;font-variant-numeric:tabular-nums}
+
+/* export menu */
+.menu-wrap{position:relative}
+.caret{font-size:.5rem;opacity:.7}
+.menu{
+  position:absolute;right:0;top:calc(100% + .35rem);z-index:900;width:16.5rem;
+  background:var(--card);border:1px solid var(--line2);border-radius:.6rem;padding:.3rem;
+  box-shadow:var(--sh3);display:flex;flex-direction:column;gap:.1rem;
+}
+.menu[hidden]{display:none}
+.menu button{
+  text-align:left;border:none;background:none;border-radius:.4rem;padding:.38rem .5rem;
+  display:flex;flex-direction:column;gap:.1rem;
+}
+.menu button:hover{background:var(--green-l)}
+.menu button b{font-size:.68rem;font-weight:600;color:var(--ink)}
+.menu button span{font-size:.56rem;color:var(--dim)}
+:focus-visible{outline:2px solid var(--green-2);outline-offset:2px}
 
 /* ====================== SHELL ====================== */
 .shell{
   height:calc(100dvh - var(--top));display:grid;
-  grid-template-columns:304px minmax(0,1fr) 384px;
+  grid-template-columns:19rem minmax(0,1fr) 24rem;
   overflow:hidden;
 }
-.rail,.inspector{background:linear-gradient(180deg,#0b1319,#080e13);min-height:0;overflow-y:auto;overscroll-behavior:contain}
-.rail{border-right:1px solid var(--line)}
-.inspector{border-left:1px solid var(--line)}
-.rail-scroll{padding:12px 13px 28px}
+.rail,.inspector{
+  background:linear-gradient(180deg,#ffffff 0%,#f7fbf5 55%,#f1f8ef 100%);
+  min-height:0;overflow-y:auto;overscroll-behavior:contain;
+}
+.rail{border-right:1px solid var(--line2);box-shadow:6px 0 18px -18px rgba(16,60,34,.8)}
+.inspector{border-left:1px solid var(--line2);box-shadow:-6px 0 18px -18px rgba(16,60,34,.8)}
+.rail-scroll{padding:.75rem .8rem 1.8rem}
 
-/* blocks */
-.block{padding:12px 0;border-bottom:1px solid var(--line)}
-.block:first-child{padding-top:2px}
+.block{padding:.7rem 0;border-bottom:1px solid var(--line)}
+.block:first-child{padding-top:.1rem}
 .block:last-child{border-bottom:none}
-.block-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
-.block-head h2{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.link{background:none;border:none;padding:0;color:var(--dim);font-size:9.5px;text-decoration:underline;text-underline-offset:2px}
-.link:hover{color:var(--accent)}
-.hint{font-size:9px;color:var(--dim)}
-.note{font-size:9.5px;color:var(--dim);line-height:1.5;margin:0 0 8px}
+.block-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;margin-bottom:.45rem}
+.block-head h2{font-size:.55rem;letter-spacing:.19em;text-transform:uppercase;color:var(--green-d);font-weight:700}
+.head-links{display:flex;gap:.5rem}
+.link{background:none;border:none;padding:0;color:var(--muted);font-size:.6rem;text-decoration:underline;text-underline-offset:2px}
+.link:hover{color:var(--green)}
+.hint{font-size:.56rem;color:var(--dim)}
+.note{font-size:.6rem;color:var(--muted);line-height:1.5;margin:0 0 .5rem}
+.note.tiny{font-size:.55rem;color:var(--dim);margin:.15rem 0 .4rem}
 .row{display:flex;align-items:center}
-.row.gap{gap:6px;margin-top:8px}
-.btn.small{padding:5px 8px;font-size:10px}
+.row.gap{gap:.35rem;margin-top:.5rem;flex-wrap:wrap}
+.row.gap.tight{margin-top:.35rem}
 
 /* period */
-.year-display{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px}
-.yr-main{display:flex;flex-direction:column;align-items:center;line-height:1;flex:1}
-.yr-main span{font-family:var(--mono);font-size:30px;letter-spacing:-.02em;color:var(--accent2)}
-.yr-main small{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:5px}
-.yr-step{border:1px solid var(--line2);background:#0a1218;border-radius:6px;width:26px;height:30px;color:var(--muted);font-size:15px;line-height:1}
-.yr-step:hover{color:var(--accent);border-color:#3b5464}
+.year-display{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin:.1rem 0 .45rem}
+.yr-main{display:flex;flex-direction:column;align-items:center;line-height:1;flex:1;min-width:0}
+.yr-main span{
+  font-size:1.42rem;letter-spacing:-.01em;font-weight:600;color:var(--pakistan);
+  font-variant-numeric:tabular-nums;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+}
+.yr-main small{font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:.3rem;text-align:center}
+.yr-step{
+  border:1px solid var(--line3);background:linear-gradient(180deg,#fff,#edf5eb);border-radius:.4rem;
+  width:1.6rem;height:1.9rem;color:var(--green-d);font-size:.9rem;line-height:1;
+  box-shadow:var(--sh1);flex:none;
+}
+.yr-step:hover{background:linear-gradient(180deg,#fff,var(--green-l))}
+.yr-step:active{transform:translateY(1px)}
+
+.year-chips{display:grid;grid-template-columns:repeat(7,1fr);gap:.18rem;margin:.2rem 0 .45rem}
+.ychip{
+  border:1px solid var(--line2);border-radius:.3rem;background:linear-gradient(180deg,#fff,#f2f8f0);
+  font-size:.5rem;color:var(--muted);padding:.18rem 0;text-align:center;font-variant-numeric:tabular-nums;
+  box-shadow:0 1px 0 #dbe8da;transition:transform .06s,background .1s;
+}
+.ychip:hover{background:linear-gradient(180deg,#fff,var(--yellow-l));border-color:#e7c752;color:#5a4700}
+.ychip:active{transform:translateY(1px)}
+.ychip.on{
+  background:linear-gradient(180deg,var(--yellow-2),var(--yellow));border-color:#d9ad12;color:#332700;font-weight:700;
+  box-shadow:0 2px 0 #c9a319,0 4px 10px -5px rgba(201,163,25,.9);
+}
+.ychip.span{border-style:dashed;border-color:var(--green-2);color:var(--green-d)}
+
 input[type=range]{
-  -webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:linear-gradient(90deg,#e0533d,#f0a35e 45%,#43c6b7);outline:none;margin:4px 0 2px;
+  -webkit-appearance:none;width:100%;height:.28rem;border-radius:.2rem;outline:none;margin:.25rem 0 .15rem;
+  background:linear-gradient(90deg,#0d6b3f,#3f9a63 45%,#ffcf33);
+  box-shadow:inset 0 1px 2px rgba(16,60,34,.35);
 }
 input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#0b1319;border:2px solid var(--accent);cursor:pointer;
+  -webkit-appearance:none;width:1rem;height:1rem;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#e9f4e7);border:2px solid var(--green);
+  cursor:pointer;box-shadow:0 2px 5px rgba(16,60,34,.45);
 }
-input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#0b1319;border:2px solid var(--accent);cursor:pointer}
-.year-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--dim)}
+input[type=range]::-moz-range-thumb{width:.85rem;height:.85rem;border-radius:50%;background:#fff;border:2px solid var(--green);cursor:pointer}
+.year-scale{display:flex;justify-content:space-between;font-size:.5rem;color:var(--dim);margin-bottom:.15rem}
 
-/* checks */
-.check{display:flex;align-items:flex-start;gap:8px;padding:5px 3px;border-radius:5px;cursor:pointer;user-select:none}
-.check:hover{background:#0f1a22}
-.check input{position:absolute;opacity:0;width:0;height:0}
-.check .sw{width:14px;height:14px;border-radius:4px;border:1px solid var(--line2);background:#0a1218;flex:none;margin-top:1px;position:relative}
-.check input:checked + .sw{border-color:var(--accent);background:rgba(240,163,94,.2)}
-.check input:checked + .sw::after{
-  content:"";position:absolute;left:3.5px;top:1px;width:5px;height:8px;
-  border:solid var(--accent2);border-width:0 1.8px 1.8px 0;transform:rotate(42deg);
+/* layer grid */
+.layer-grid{display:grid;grid-template-columns:1fr;gap:.16rem}
+.layer{
+  display:flex;align-items:center;gap:.4rem;padding:.22rem .3rem;border-radius:.38rem;cursor:pointer;
+  border:1px solid transparent;font-size:.63rem;color:var(--ink2);
 }
-.check .txt{display:flex;flex-direction:column;font-size:11px;color:#cfdde7;line-height:1.3}
-.check .txt small{font-size:8.6px;color:var(--dim);margin-top:1px}
-.sw-district{background:linear-gradient(135deg,#f7e9c8 0 50%,#bd3438 50%)!important}
-.sw-border{background:#20303a!important;border-style:dashed!important}
-.sw-fata{background:repeating-linear-gradient(45deg,#2c3b45 0 2px,#0a1218 2px 4px)!important}
-.sw-pin{background:radial-gradient(circle at 50% 50%,#e0533d 0 3px,transparent 3px)!important}
-.sw-heat{background:radial-gradient(circle at 50% 50%,#ffd166 0 2px,rgba(255,209,102,.25) 3px,transparent 5px)!important}
-.sw-neigh{background:#111a21!important;border-style:dotted!important}
+.layer:hover{background:var(--green-ll);border-color:var(--line)}
+.layer input{position:absolute;opacity:0;width:0;height:0}
+.layer-box{
+  position:relative;width:1.05rem;height:1.05rem;border-radius:.25rem;flex:none;
+  background:linear-gradient(180deg,#fff,#eef5ec);border:1px solid var(--line3);box-shadow:var(--shin);
+  transition:transform .08s,box-shadow .12s;
+}
+.layer:hover .layer-box{transform:translateY(-1px);box-shadow:0 3px 6px -4px rgba(16,60,34,.6),inset 0 1px 0 #fff}
+.layer-box .sw{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.layer input:checked + .layer-box{background:linear-gradient(180deg,var(--yellow-2),var(--yellow));border-color:#d9ad12}
+.layer input:checked + .layer-box .sw{opacity:.28}
+.layer input:checked + .layer-box:after{
+  content:"";position:absolute;left:50%;top:46%;width:.2rem;height:.4rem;
+  border:solid #3c2f00;border-width:0 2px 2px 0;
+  transform:translate(-50%,-50%) rotate(42deg);
+}
+.layer .txt{flex:1;min-width:0}
+.layer[data-layer="districts"].on{background:var(--yellow-l)}
+.sw{width:.72rem;height:.72rem;border-radius:.18rem;display:block}
+.sw-district{background:linear-gradient(135deg,#f6e4b4,#c55a35)}
+.sw-border{background:#0d6b3f;border:1px solid #fff;box-shadow:0 0 0 1px #0d6b3f}
+.sw-fata{background:repeating-linear-gradient(45deg,#8fb7a1,#8fb7a1 2px,transparent 2px,transparent 4px);border:1px solid #7aa38d}
+.sw-pin{background:radial-gradient(circle at 50% 50%,#d92332 0 40%,#fff 41% 60%,transparent 61%)}
+.sw-heat{background:radial-gradient(circle,rgba(255,207,51,.95),rgba(217,35,50,.55) 60%,transparent 70%)}
+.sw-neigh{background:#d8e6d5;border:1px dashed #7f978a}
 
-.select-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
-.select-row label{font-size:9.5px;color:var(--dim)}
-.select{
-  background:#0a1218;border:1px solid var(--line2);border-radius:6px;padding:5px 7px;
-  font-size:10.5px;color:var(--text);max-width:172px;
-}
+.select-row{display:grid;grid-template-columns:1fr;gap:.2rem;margin-top:.45rem}
+.select-row label{font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600}
 
 /* series toggles */
-.series-toggles{display:flex;flex-direction:column;gap:2px}
+.series-toggles{display:flex;flex-direction:column;gap:.1rem}
 .series{
-  display:flex;align-items:center;gap:8px;padding:5px 4px;border-radius:5px;
-  cursor:pointer;user-select:none;border:1px solid transparent;
+  display:flex;align-items:center;gap:.4rem;padding:.24rem .3rem;border-radius:.38rem;
+  cursor:pointer;border:1px solid transparent;font-size:.63rem;
 }
-.series:hover{background:#0f1a22}
-.series.off{opacity:.42}
+.series:hover{background:var(--green-ll);border-color:var(--line)}
 .series input{position:absolute;opacity:0;width:0;height:0}
-.series .swatch{width:9px;height:9px;border-radius:2px;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.12) inset}
-.series .name{font-size:11px;color:#cfdde7;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.series .val{font-family:var(--mono);font-size:9.5px;color:var(--muted)}
-.series .chk{width:12px;height:12px;border:1px solid var(--line2);border-radius:3px;flex:none}
-.series input:checked ~ .chk{background:rgba(240,163,94,.22);border-color:var(--accent)}
-
-/* categories */
-.cat-toggles{display:flex;flex-wrap:wrap;gap:4px}
-.cat{
-  display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);
-  background:#0a1218;border-radius:20px;padding:4px 8px;font-size:9.5px;color:var(--muted);cursor:pointer;
+.series .swatch{width:.55rem;height:.55rem;border-radius:.18rem;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.series .name{flex:1;min-width:0;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.series .val{font-variant-numeric:tabular-nums;font-size:.6rem;color:var(--green-d);font-weight:600}
+.series .chk{
+  width:.85rem;height:.85rem;border-radius:.22rem;border:1px solid var(--line3);flex:none;
+  background:linear-gradient(180deg,#fff,#eef5ec);box-shadow:var(--shin);display:grid;place-items:center;
 }
-.cat i{width:6px;height:6px;border-radius:50%;flex:none}
-.cat .n{font-family:var(--mono);font-size:8.5px;color:var(--dim)}
-.cat.on{border-color:rgba(255,255,255,.22);color:#e4edf4;background:#111c25}
-.cat.on .n{color:var(--muted)}
+.series input:checked ~ .chk{background:linear-gradient(180deg,var(--yellow-2),var(--yellow));border-color:#d9ad12}
+.series input:checked ~ .chk:after{content:"";width:.18rem;height:.36rem;border:solid #3c2f00;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(42deg)}
+.series.off .name,.series.off .val{opacity:.5}
 
-.sev-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-.sev-row button{border:1px solid var(--line2);background:#0a1218;border-radius:5px;padding:5px 0;font-size:10px;color:var(--muted)}
-.sev-row button.active{background:var(--accent);border-color:var(--accent);color:#171006;font-weight:650}
-.block.foot p{font-size:9px;color:#4f6473;line-height:1.55;margin:0}
+/* category chips */
+.cat-toggles{display:flex;flex-wrap:wrap;gap:.22rem}
+.cat{
+  display:inline-flex;align-items:center;gap:.28rem;border:1px solid var(--line2);border-radius:2rem;
+  background:linear-gradient(180deg,#fff,#f2f8f0);padding:.18rem .45rem;font-size:.58rem;color:var(--muted);
+  box-shadow:0 1px 0 #dbe8da;
+}
+.cat i{width:.42rem;height:.42rem;border-radius:50%;flex:none;opacity:.45}
+.cat.on{color:var(--ink);border-color:var(--line3);background:linear-gradient(180deg,#fff,#f7fcf5)}
+.cat.on i{opacity:1}
+.cat .n{font-size:.5rem;color:var(--dim);font-variant-numeric:tabular-nums}
+.cat[aria-pressed="true"]{box-shadow:0 2px 0 #dbe8da,inset 0 1px 0 #fff}
+
+.sev-row{display:grid;grid-template-columns:repeat(5,1fr);gap:.2rem}
+.sev-row button{
+  border:1px solid var(--line2);background:linear-gradient(180deg,#fff,#f2f8f0);border-radius:.35rem;
+  font-size:.58rem;padding:.24rem 0;color:var(--muted);box-shadow:0 1px 0 #dbe8da;
+}
+.sev-row button:hover{background:linear-gradient(180deg,#fff,var(--yellow-l))}
+.sev-row button.active{
+  background:linear-gradient(180deg,var(--yellow-2),var(--yellow));border-color:#d9ad12;color:#332700;font-weight:700;
+  box-shadow:0 2px 0 #c9a319;
+}
+.block.foot p{font-size:.55rem;color:var(--dim);line-height:1.55;margin:0}
 
 /* ====================== MAP COLUMN ====================== */
-.mapcol{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0;background:#080e13}
-.legendbar{
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:7px 12px;
-  border-bottom:1px solid var(--line);background:#0b1319;min-height:38px;
+.mapcol{
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0;
+  background:var(--paper2);
 }
-.lg-title{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.lg-classes{display:flex;align-items:center;gap:3px;flex-wrap:wrap}
-.lg-class{display:flex;align-items:center;gap:4px;font-size:8.5px;color:#a9bcc9;white-space:nowrap}
-.lg-class i{width:20px;height:9px;border-radius:2px;display:inline-block}
-.lg-class.zero i{background:repeating-linear-gradient(45deg,#2c3b45,#2c3b45 2px,#141e25 2px,#141e25 4px)!important}
-.lg-note{font-size:8.5px;color:var(--dim);flex:1;min-width:80px}
-.lg-source{font-size:8.5px;color:#54707f;white-space:nowrap;border-left:1px solid var(--line2);padding-left:10px}
+.legendbar{
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.35rem .7rem;
+  border-bottom:1px solid var(--line2);min-height:2.2rem;
+  background:linear-gradient(180deg,#fff,#f4faf2);
+  box-shadow:inset 0 1px 0 #fff,0 6px 12px -14px rgba(16,60,34,.9);
+}
+.lg-title{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--green-d);white-space:nowrap;font-weight:700}
+.lg-classes{display:flex;align-items:center;gap:.18rem;flex-wrap:wrap}
+.lg-class{display:flex;align-items:center;gap:.2rem;font-size:.5rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lg-class i{width:1.1rem;height:.55rem;border-radius:.15rem;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08),0 1px 1px rgba(16,60,34,.15)}
+.lg-class.zero i{background:repeating-linear-gradient(45deg,#c9d8c7,#c9d8c7 2px,#eef4ec 2px,#eef4ec 4px)!important}
+.lg-note{font-size:.5rem;color:var(--dim);flex:1;min-width:5rem}
+.lg-source{font-size:.5rem;color:var(--green-2);white-space:nowrap;border-left:1px solid var(--line2);padding-left:.6rem;font-weight:600}
 
-.map-wrap{position:relative;min-height:0;min-width:0;overflow:hidden;background:#0a1016}
-#map{position:absolute;inset:0;background:#0a1016}
-.leaflet-container{font:inherit;background:#0a1016}
-.leaflet-tile{filter:saturate(.94) contrast(.97)}
-body.basemap-dark .leaflet-tile{filter:saturate(.8) contrast(1.02) brightness(.92)}
+.map-wrap{
+  position:relative;min-height:0;min-width:0;overflow:hidden;background:#e9f1e6;
+  box-shadow:inset 0 0 0 1px var(--line2),inset 0 16px 30px -24px rgba(16,60,34,.75);
+}
+#map{position:absolute;inset:0;background:#e9f1e6;box-shadow:inset 0 0 40px rgba(16,60,34,.10)}
+.leaflet-container{font:inherit;background:#e9f1e6}
+.leaflet-tile{filter:saturate(.92) contrast(.97) brightness(1.03)}
+body.basemap-dark .leaflet-tile{filter:saturate(.82) contrast(1.02) brightness(.93)}
 .map-tag{
-  position:absolute;left:10px;bottom:10px;z-index:500;pointer-events:none;
-  font-size:9px;letter-spacing:.02em;color:#dce8f1;background:rgba(8,14,20,.78);
-  border:1px solid rgba(50,70,84,.7);border-radius:5px;padding:4px 8px;backdrop-filter:blur(6px);
+  position:absolute;left:.6rem;bottom:.6rem;z-index:500;pointer-events:none;
+  font-size:.55rem;letter-spacing:.01em;color:var(--ink);background:rgba(255,255,255,.92);
+  border:1px solid var(--line2);border-radius:.35rem;padding:.22rem .45rem;
+  box-shadow:var(--sh1);backdrop-filter:blur(4px);
 }
 .map-scale-note{
-  position:absolute;left:10px;bottom:38px;z-index:500;pointer-events:none;
-  font-size:8.5px;color:#9db2c1;background:rgba(8,14,20,.7);border-radius:4px;padding:3px 6px;
+  position:absolute;left:.6rem;bottom:2.2rem;z-index:500;pointer-events:none;
+  font-size:.5rem;color:var(--ink2);background:rgba(255,255,255,.9);border-radius:.3rem;padding:.15rem .35rem;
+  border:1px solid rgba(214,227,211,.9);
 }
+.map-scale-note:empty{display:none}
 .credit{
-  position:absolute;right:8px;bottom:8px;z-index:500;font-size:8.5px;color:#8fa4b3;
-  background:rgba(8,14,20,.75);border-radius:3px;padding:2px 6px;pointer-events:none;
+  position:absolute;right:.5rem;bottom:.5rem;z-index:500;font-size:.5rem;color:var(--ink2);
+  background:rgba(255,255,255,.92);border-radius:.25rem;padding:.12rem .35rem;pointer-events:none;
+  border:1px solid var(--line);
 }
-.leaflet-control-zoom a{background:#0f1a22!important;color:#dbe7ef!important;border-color:#263945!important}
-.leaflet-control-zoom a:hover{background:#15232d!important}
-.leaflet-control-attribution{background:rgba(8,14,20,.72)!important;color:#6f8494!important;font-size:8.5px!important}
+.maponly-exit{
+  display:none;position:absolute;top:.6rem;left:.6rem;z-index:600;
+  border:1px solid var(--line3);background:linear-gradient(180deg,#fff,#eef5ec);border-radius:.45rem;
+  padding:.3rem .55rem;font-size:.62rem;color:var(--green-d);box-shadow:var(--sh2);font-weight:600;
+}
+
+.leaflet-control-zoom a{
+  background:linear-gradient(180deg,#fff,#eef5ec)!important;color:var(--green-d)!important;
+  border-color:var(--line2)!important;box-shadow:0 1px 0 #fff inset;
+}
+.leaflet-control-zoom a:hover{background:#fff!important}
+.leaflet-control-zoom{border:1px solid var(--line2)!important;border-radius:.45rem!important;overflow:hidden;box-shadow:var(--sh2)!important}
+.leaflet-control-attribution{
+  background:rgba(255,255,255,.9)!important;color:var(--muted)!important;font-size:.48rem!important;
+  border-radius:.25rem 0 0 0;
+}
 .leaflet-tooltip{
-  background:#0c151c;color:#e6eef5;border:1px solid #2a3c49;border-radius:6px;
-  box-shadow:0 8px 24px rgba(0,0,0,.5);padding:7px 9px;font-size:11px;
+  background:#fff;color:var(--ink);border:1px solid var(--line2);border-radius:.45rem;
+  box-shadow:var(--sh3);padding:.4rem .5rem;font-size:.66rem;
 }
-.leaflet-tooltip-top:before{border-top-color:#2a3c49}
+.leaflet-tooltip-top:before{border-top-color:#fff}
 .district-label{
   background:none;border:none;box-shadow:none;pointer-events:none;font-family:var(--sans);
-  font-size:9px;font-weight:600;letter-spacing:.04em;color:#e7f0f7;text-shadow:0 0 3px #000,0 0 6px #000;
-  white-space:nowrap;
+  font-size:.55rem;font-weight:700;letter-spacing:.03em;color:#173a26;
+  text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 5px #fff;white-space:nowrap;
 }
-.district-label .v{display:block;font-family:var(--mono);font-weight:500;font-size:8px;color:#ffd9b0;text-align:center;letter-spacing:0}
+.district-label .v{display:block;font-weight:600;font-size:.5rem;color:#6b4a00;text-align:center;text-shadow:0 0 2px #fff,0 0 4px #fff}
 .district-label.dim{opacity:.55}
+.district-label.sel{color:#8c1119;z-index:650!important}
+.district-label.sel .v{color:#8c1119}
+.selected-tag{font-style:normal;background:#d92332;color:#fff;font-size:.42rem;font-weight:700;border-radius:.18rem;padding:0 .18rem;letter-spacing:.04em;text-transform:uppercase}
+.selected-tag{background:#fff;border:1px solid var(--red);color:var(--red);font-size:.5rem;font-weight:700;border-radius:.2rem;padding:0 .2rem}
 
 /* ====================== TIMELINE ====================== */
 .timeline{
-  border-top:1px solid var(--line);background:#0a1218;padding:6px 12px 8px;min-height:0;
+  border-top:1px solid var(--line2);background:linear-gradient(180deg,#fff,#f6fbf4);
+  padding:.3rem .7rem .4rem;min-height:0;
+  box-shadow:0 -8px 18px -20px rgba(16,60,34,.9);
 }
-.tl-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px;flex-wrap:wrap}
-.tl-title{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
-.tl-title span{color:var(--dim);font-family:var(--mono);letter-spacing:.04em;text-transform:none;margin-left:6px}
-.tl-legend{display:flex;gap:10px;align-items:center;font-size:8.5px;color:var(--dim);flex:1;flex-wrap:wrap;min-width:0}
-.tl-legend .key{display:flex;align-items:center;gap:4px;white-space:nowrap}
-.tl-legend .key i{width:9px;height:9px;border-radius:2px}
-.tl-legend .key.line i{height:0;border-top:2px solid;width:12px;border-radius:0;background:none!important}
-.tl-tools{display:flex;align-items:center;gap:8px}
-.tiny-check{display:flex;align-items:center;gap:4px;font-size:8.5px;color:var(--dim);cursor:pointer}
-.tiny-check input{accent-color:var(--accent);width:10px;height:10px}
-.tl-chart{height:132px;position:relative;margin-top:1px}
+.tl-head{display:flex;align-items:center;justify-content:space-between;gap:.7rem;margin-bottom:.1rem;flex-wrap:wrap}
+.tl-title{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--green-d);font-weight:700}
+.tl-title span{color:var(--dim);letter-spacing:.02em;text-transform:none;margin-left:.35rem;font-variant-numeric:tabular-nums}
+.tl-legend{display:flex;gap:.6rem;align-items:center;font-size:.5rem;color:var(--muted);flex:1;flex-wrap:wrap;min-width:0}
+.tl-legend .key{display:flex;align-items:center;gap:.22rem;white-space:nowrap}
+.tl-legend .key i{width:.55rem;height:.55rem;border-radius:.14rem}
+.tl-legend .key.line i{height:0;border-top:2px solid;width:.75rem;border-radius:0;background:none!important}
+.tl-tools{display:flex;align-items:center;gap:.45rem}
+.tl-selected{
+  font-size:.5rem;color:#4a3900;background:linear-gradient(180deg,var(--yellow-2),var(--yellow));
+  border:1px solid #e0b41b;border-radius:1rem;padding:.08rem .4rem;font-weight:700;white-space:nowrap;
+}
+.tiny-check{display:flex;align-items:center;gap:.22rem;font-size:.5rem;color:var(--dim);cursor:pointer}
+.tiny-check input{accent-color:var(--green);width:.6rem;height:.6rem}
+.tl-chart{height:8.2rem;position:relative;margin-top:.05rem}
 .tl-chart svg{display:block;width:100%;height:100%;overflow:visible}
-.tl-axis{font-size:8px;fill:#5e7386;font-family:var(--mono)}
-.tl-bar{transition:opacity .15s;cursor:pointer}
+.tl-axis{font-size:.5rem;fill:#7f978a;font-family:var(--sans)}
+.tl-bar{transition:opacity .15s;cursor:pointer;fill:#bfe0ca}
+.tl-bar.on{fill:#2f8f5b}
 .tl-bar:hover{opacity:.8}
-.tl-focus{fill:rgba(240,163,94,.07);stroke:rgba(240,163,94,.25);stroke-width:1;pointer-events:none}
+.tl-focus{fill:rgba(255,207,51,.22);stroke:rgba(224,180,27,.55);stroke-width:1;pointer-events:none}
 .tl-year-hit{fill:transparent;cursor:pointer}
-.tl-grid{stroke:#16232c;stroke-width:1}
+.tl-grid{stroke:#e2ecdf;stroke-width:1}
 .tl-tip{
-  position:absolute;z-index:20;background:#0d1720;border:1px solid #2a3c49;border-radius:6px;
-  padding:7px 9px;font-size:10px;color:#dce8f1;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.55);
-  min-width:150px;transform:translate(-50%,-110%);
+  position:absolute;z-index:20;background:#fff;border:1px solid var(--line2);border-radius:.45rem;
+  padding:.4rem .5rem;font-size:.6rem;color:var(--ink);pointer-events:none;box-shadow:var(--sh3);
+  min-width:9rem;transform:translate(-50%,-110%);
 }
-.tl-tip b{color:var(--accent2)}
-.tl-tip .r{display:flex;justify-content:space-between;gap:14px;color:#a9bcc9;font-size:9.5px;margin-top:2px}
+.tl-tip b{color:var(--green-d)}
+.tl-tip .r{display:flex;justify-content:space-between;gap:.9rem;color:var(--muted);font-size:.55rem;margin-top:.1rem}
 .timeline.collapsed .tl-chart{display:none}
 
 /* ====================== INSPECTOR ====================== */
 .insp-head{
-  position:sticky;top:0;z-index:20;background:rgba(10,17,23,.97);backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--line);padding:8px 10px;display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line2);padding:.45rem .55rem;display:flex;align-items:center;gap:.4rem;
+  box-shadow:0 4px 10px -12px rgba(16,60,34,.9);
 }
-.tabs{display:flex;gap:2px;flex:1;background:#080f14;border:1px solid var(--line2);border-radius:7px;padding:2px}
+.tabs{display:flex;gap:.12rem;flex:1;background:#eef5ec;border:1px solid var(--line2);border-radius:.45rem;padding:.12rem;box-shadow:var(--shin)}
 .tab{
-  flex:1;border:none;background:none;border-radius:5px;padding:4px 2px;font-size:10px;color:var(--dim);
+  flex:1;border:none;background:none;border-radius:.32rem;padding:.22rem .1rem;font-size:.6rem;color:var(--muted);
 }
-.tab:hover{color:var(--muted)}
-.tab.active{background:#16232c;color:var(--accent2)}
-.insp-body{padding:12px 13px 30px}
+.tab:hover{color:var(--ink2)}
+.tab.active{
+  background:linear-gradient(180deg,#fff,#f6fbf4);color:var(--green-d);font-weight:700;
+  box-shadow:0 1px 0 #cfe0cd,0 4px 10px -8px rgba(16,60,34,.9),inset 0 -2px 0 var(--yellow);
+}
+.insp-body{padding:.7rem .8rem 2rem}
 
 /* generic */
-.kicker{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
-.h2{font-family:var(--serif);font-size:21px;line-height:1.15;margin-bottom:2px}
-.sub{font-size:10px;color:var(--muted)}
-.section{margin-top:16px}
-.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px}
-.section-head h3{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.section-head .sub{font-size:8.5px}
-.empty{border:1px dashed var(--line2);border-radius:8px;padding:14px;text-align:center;color:var(--dim);font-size:10.5px;line-height:1.6}
+.kicker{font-size:.52rem;letter-spacing:.19em;text-transform:uppercase;color:var(--green-2);margin-bottom:.2rem;font-weight:700}
+.h2{
+  font-size:1.5rem;line-height:1.12;margin-bottom:.1rem;color:var(--pakistan);font-weight:600;
+  position:relative;padding-left:.5rem;
+}
+.h2:before{
+  content:"";position:absolute;left:0;top:.12em;bottom:.12em;width:.2rem;border-radius:.2rem;
+  background:linear-gradient(180deg,var(--yellow-2),var(--yellow));
+  box-shadow:0 1px 0 #e0b41b;
+}
+.sub{font-size:.6rem;color:var(--muted)}
+.section{margin-top:1rem}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;margin-bottom:.4rem}
+.section-head h3{font-size:.53rem;letter-spacing:.17em;text-transform:uppercase;color:var(--green-d);font-weight:700}
+.section-head .sub{font-size:.52rem}
+.empty{
+  border:1px dashed var(--line3);border-radius:.5rem;padding:.8rem;text-align:center;color:var(--muted);
+  font-size:.62rem;line-height:1.6;background:linear-gradient(180deg,#fff,#f7fbf5);
+}
 
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.kpi{background:#0e181f;border:1px solid #1b2932;border-radius:8px;padding:8px 9px}
-.kpi .v{font-family:var(--mono);font-size:17px;line-height:1.05}
-.kpi .l{font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim);margin-top:3px}
-.kpi .d{font-size:8.5px;margin-top:4px;color:var(--dim)}
-.kpi .d.up{color:#f08b74}
-.kpi .d.down{color:#6ec49b}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:.3rem}
+.kpi{
+  background:linear-gradient(180deg,#fff,#f7fbf5);border:1px solid var(--line);border-radius:.5rem;
+  padding:.45rem .5rem;box-shadow:var(--sh1);
+  transition:transform .1s,box-shadow .14s;
+}
+.kpi:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.kpi .v{font-size:1.12rem;line-height:1.05;font-weight:600;font-variant-numeric:tabular-nums;color:var(--green-d)}
+.kpi .l{font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:.18rem;font-weight:600}
+.kpi .d{font-size:.53rem;margin-top:.22rem;color:var(--dim)}
+.kpi .d.up{color:var(--red)}
+.kpi .d.down{color:var(--green-2)}
 .kpi .d.flat{color:var(--dim)}
 
-.deltas{display:flex;flex-direction:column;gap:5px;margin-top:10px}
-.delta{display:grid;grid-template-columns:70px minmax(0,1fr) 52px;gap:8px;align-items:center;font-size:9.5px;color:#b9cbd8}
-.delta .bar{height:5px;border-radius:3px;background:#16222b;overflow:hidden}
-.delta .bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#f0a35e,#e0533d)}
-.delta .v{text-align:right;font-family:var(--mono);font-size:9px;color:var(--muted)}
+.deltas{display:flex;flex-direction:column;gap:.25rem;margin-top:.5rem}
+.delta{display:grid;grid-template-columns:4.4rem minmax(0,1fr) 3.2rem;gap:.4rem;align-items:center;font-size:.58rem;color:var(--ink2)}
+.delta .bar{height:.3rem;border-radius:.2rem;background:#e9f1e6;overflow:hidden;box-shadow:var(--shin)}
+.delta .bar i{display:block;height:100%;border-radius:.2rem;background:linear-gradient(90deg,var(--green-2),var(--yellow))}
+.delta .v{text-align:right;font-size:.55rem;color:var(--muted);font-variant-numeric:tabular-nums}
 
-table.tbl{width:100%;border-collapse:collapse;font-size:10px}
+table.tbl{width:100%;border-collapse:collapse;font-size:.6rem}
 table.tbl th{
-  font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
-  font-weight:600;text-align:right;padding:4px 5px;border-bottom:1px solid var(--line2);white-space:nowrap;
+  font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:700;
+  text-align:right;padding:.22rem .3rem;border-bottom:1px solid var(--line2);white-space:nowrap;
 }
 table.tbl th:first-child{text-align:left}
-table.tbl td{padding:4px 5px;text-align:right;border-bottom:1px solid #131f27;font-family:var(--mono);color:#cfdde7}
-table.tbl td:first-child{text-align:left;font-family:var(--sans);color:#b9cbd8}
-table.tbl tr:hover td{background:#0f1a22}
-table.tbl td.em{color:var(--accent2)}
-table.tbl tr.total td{border-top:1px solid var(--line2);color:#e4eef6;font-weight:600}
+table.tbl td{
+  padding:.22rem .3rem;text-align:right;border-bottom:1px solid #eef4ec;
+  font-variant-numeric:tabular-nums;color:var(--ink2);
+}
+table.tbl td:first-child{text-align:left;color:var(--ink)}
+table.tbl tr:hover td{background:var(--green-ll)}
+table.tbl td.em{color:var(--green-d);font-weight:600}
+table.tbl tr.total td{border-top:1px solid var(--line2);color:var(--ink);font-weight:700}
 
 /* year matrix */
-.matrix-wrap{overflow-x:auto;border:1px solid var(--line2);border-radius:7px;background:#080f14}
-table.matrix{border-collapse:collapse;font-size:8px;width:max-content;min-width:100%}
-table.matrix th{position:sticky;top:0;background:#0b141b;color:var(--dim);font-weight:600;padding:3px 4px;font-family:var(--mono);cursor:pointer}
-table.matrix th.cur{color:var(--accent2)}
-table.matrix td{padding:2px 4px;text-align:center;font-family:var(--mono);color:#c3d4e0;cursor:pointer;min-width:22px}
-table.matrix td.rowlab{
-  text-align:left;font-family:var(--sans);color:#a9bcc9;position:sticky;left:0;background:#0b141b;
-  white-space:nowrap;padding-right:8px;z-index:2;
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line2);border-radius:.45rem;background:#fff;box-shadow:var(--sh1)}
+table.matrix{border-collapse:collapse;font-size:.5rem;width:max-content;min-width:100%}
+table.matrix th{
+  position:sticky;top:0;background:linear-gradient(180deg,#f7fbf5,#eef5ec);color:var(--dim);font-weight:700;
+  padding:.16rem .22rem;cursor:pointer;border-bottom:1px solid var(--line2);
 }
-table.matrix td.cur{outline:1px solid rgba(240,163,94,.75);outline-offset:-1px}
-table.matrix tr:hover td.rowlab{color:var(--accent2)}
+table.matrix th.cur{color:#3a2c00;background:linear-gradient(180deg,var(--yellow-2),var(--yellow))}
+table.matrix th.in{color:var(--green-d)}
+table.matrix td{
+  padding:.1rem .22rem;text-align:center;color:var(--ink2);cursor:pointer;min-width:1.5rem;
+  font-variant-numeric:tabular-nums;
+}
+table.matrix td.rowlab{
+  text-align:left;color:var(--ink);position:sticky;left:0;background:#fbfdf9;
+  white-space:nowrap;padding-right:.5rem;z-index:2;border-right:1px solid var(--line);
+}
+table.matrix td.cur{outline:2px solid var(--yellow);outline-offset:-2px}
+table.matrix td.in{background-image:linear-gradient(180deg,rgba(255,207,51,.34),rgba(255,207,51,.34))}
+table.matrix tr:hover td.rowlab{color:var(--green-d)}
+
+.rank{color:var(--dim);font-size:.5rem;margin-right:.35rem;font-variant-numeric:tabular-nums}
 
 /* district */
-.dist-head{display:flex;gap:9px;align-items:center;margin-bottom:10px}
+.dist-head{display:flex;gap:.55rem;align-items:center;margin-bottom:.6rem}
 .dist-emblem{
-  width:36px;height:36px;border-radius:9px;display:grid;place-items:center;
-  background:rgba(240,163,94,.14);border:1px solid rgba(240,163,94,.4);
-  color:var(--accent2);font-family:var(--serif);font-size:18px;flex:none;
+  width:2.3rem;height:2.3rem;border-radius:.55rem;display:grid;place-items:center;
+  background:linear-gradient(180deg,#fff,#e9f3e7);border:1px solid var(--line2);
+  color:var(--green-d);font-size:1.05rem;flex:none;box-shadow:var(--sh2);font-weight:600;
 }
-.badge{display:inline-block;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:1px}
-.badge.fata{background:rgba(167,139,250,.15);color:#c4b1fd;border:1px solid rgba(167,139,250,.35)}
-.badge.settled{background:#141f27;color:#90a5b5;border:1px solid #263945}
-.spark{background:#0b141b;border:1px solid #1b2932;border-radius:7px;padding:7px 8px 3px}
+.badge{display:inline-block;font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;padding:.1rem .3rem;border-radius:.2rem;margin-left:.35rem;vertical-align:1px;font-weight:700}
+.badge.fata{background:var(--yellow-l);color:#6b5100;border:1px solid #e6c65a}
+.badge.settled{background:var(--green-l);color:var(--green-d);border:1px solid #bcd9c5}
+.spark{
+  background:linear-gradient(180deg,#fff,#f7fbf5);border:1px solid var(--line);border-radius:.45rem;
+  padding:.4rem .45rem .15rem;box-shadow:var(--sh1);
+}
 .spark svg{display:block;width:100%;height:auto}
-.spark .cap{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.spark .cap{font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.18rem}
 
 /* incident list */
-.search{width:100%;background:#0a1218;border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font-size:10.5px;margin-bottom:8px}
-.search::placeholder{color:#4f6473}
-.inc-list{display:flex;flex-direction:column;gap:1px}
-.inc-row{display:flex;align-items:center;gap:8px;padding:6px 4px;border-radius:5px;cursor:pointer;border-bottom:1px solid #111c24}
-.inc-row:hover{background:#0f1a22}
-.inc-dot{width:7px;height:7px;border-radius:50%;flex:none}
+.search{
+  width:100%;background:#fff;border:1px solid var(--line2);border-radius:.4rem;padding:.3rem .45rem;
+  font-size:.62rem;margin-bottom:.4rem;box-shadow:var(--shin);
+}
+.search::placeholder{color:#9aae9f}
+.inc-list{display:flex;flex-direction:column;gap:.06rem}
+.inc-row{
+  display:flex;align-items:center;gap:.4rem;padding:.3rem .25rem;border-radius:.35rem;cursor:pointer;
+  border-bottom:1px solid #f0f6ee;
+}
+.inc-row:hover{background:var(--green-ll)}
+.inc-dot{width:.45rem;height:.45rem;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
 .inc-main{flex:1;min-width:0}
-.inc-main b{display:block;font-size:10.5px;font-weight:500;color:#dbe7ef;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.inc-main span{font-size:8.5px;color:var(--dim)}
-.inc-fig{font-family:var(--mono);font-size:9.5px;color:var(--muted);text-align:right;white-space:nowrap}
-.inc-fig b{display:block;color:#f1b183;font-weight:600}
-.inc-detail .meta{display:grid;grid-template-columns:88px 1fr;gap:4px 8px;font-size:10px;margin-top:10px}
-.inc-detail .meta dt{color:var(--dim);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;padding-top:2px}
-.inc-detail .meta dd{margin:0;color:#cfdde7}
-.inc-summary{font-size:10.5px;color:#b9cbd8;line-height:1.55;margin-top:10px;border-left:2px solid #263945;padding-left:9px}
-.tagrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.tag{font-size:8px;border:1px solid #263945;border-radius:3px;padding:1px 5px;color:var(--dim)}
-.btnrow{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
-.btnrow .btn{flex:1;text-align:center;font-size:10px}
+.inc-main b{display:block;font-size:.62rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inc-main span{font-size:.52rem;color:var(--dim)}
+.inc-fig{font-size:.55rem;color:var(--muted);text-align:right;white-space:nowrap}
+.inc-fig b{display:block;color:var(--green-d);font-weight:700;font-size:.62rem}
+.inc-detail .meta{display:grid;grid-template-columns:5.4rem 1fr;gap:.22rem .5rem;font-size:.6rem;margin-top:.55rem}
+.inc-detail .meta dt{color:var(--dim);font-size:.5rem;letter-spacing:.07em;text-transform:uppercase;padding-top:.12rem;font-weight:600}
+.inc-detail .meta dd{margin:0;color:var(--ink2)}
+.inc-summary{
+  font-size:.64rem;color:var(--ink2);line-height:1.55;margin-top:.55rem;
+  border-left:3px solid var(--yellow);padding-left:.55rem;background:linear-gradient(90deg,var(--yellow-l),transparent 70%);
+  border-radius:.15rem;padding-top:.25rem;padding-bottom:.25rem;
+}
+.tagrow{display:flex;flex-wrap:wrap;gap:.22rem;margin-top:.45rem}
+.tag{font-size:.5rem;border:1px solid var(--line2);border-radius:.2rem;padding:.05rem .3rem;color:var(--muted);background:#fff}
+.btnrow{display:flex;gap:.35rem;margin-top:.65rem;flex-wrap:wrap}
+.btnrow .btn{flex:1;text-align:center;font-size:.6rem}
 
 /* sources */
-.src-item{border:1px solid #1b2932;border-radius:7px;padding:8px 9px;margin-bottom:6px;background:#0b141b}
-.src-item b{font-size:10px;color:#dbe7ef;display:block}
-.src-item span{font-size:8.5px;color:var(--dim)}
-.src-item a{font-size:8.5px;word-break:break-all}
+.src-item{
+  border:1px solid var(--line);border-radius:.42rem;padding:.42rem .5rem;margin-bottom:.3rem;
+  background:linear-gradient(180deg,#fff,#f8fcf7);box-shadow:var(--sh1);
+  transition:transform .1s,box-shadow .14s;
+}
+.src-item:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.src-item b{font-size:.6rem;color:var(--ink);display:block;font-weight:600}
+.src-item span{font-size:.52rem;color:var(--dim)}
+.src-item a{font-size:.52rem;word-break:break-all;color:var(--green)}
 
 /* modal */
 .modal[hidden]{display:none}
-.modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px}
-.modal-scrim{position:absolute;inset:0;background:rgba(3,7,10,.78);backdrop-filter:blur(3px)}
+.modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1.2rem}
+.modal-scrim{position:absolute;inset:0;background:rgba(10,40,24,.42);backdrop-filter:blur(3px)}
 .modal-card{
-  position:relative;width:min(760px,100%);max-height:86vh;display:flex;flex-direction:column;
-  background:#0b131a;border:1px solid #263945;border-radius:12px;box-shadow:0 30px 90px rgba(0,0,0,.65);
+  position:relative;width:min(48rem,100%);max-height:86vh;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#fff,#f8fcf7);border:1px solid var(--line2);border-radius:.75rem;
+  box-shadow:0 40px 90px -30px rgba(10,40,24,.6),inset 0 1px 0 #fff;
 }
-.modal-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--line)}
-.modal-head h2{font-family:var(--serif);font-size:18px}
-.modal-body{padding:16px;overflow-y:auto;font-size:11.5px;line-height:1.62;color:#c3d4e0}
-.modal-body h3{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin:18px 0 7px}
-.modal-body p{margin:0 0 9px}
-.modal-body ul{margin:0 0 10px;padding-left:16px}
-.modal-body li{margin-bottom:5px}
-.modal-body code{font-family:var(--mono);font-size:10px;background:#101a22;padding:1px 4px;border-radius:3px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:.7rem .9rem;border-bottom:1px solid var(--line)}
+.modal-head h2{font-size:1.05rem;color:var(--pakistan)}
+.modal-body{padding:.85rem;overflow-y:auto;font-size:.68rem;line-height:1.62;color:var(--ink2)}
+.modal-body h3{font-size:.53rem;letter-spacing:.16em;text-transform:uppercase;color:var(--green-2);margin:1rem 0 .35rem;font-weight:700}
+.modal-body p{margin:0 0 .5rem}
+.modal-body ul{margin:0 0 .55rem;padding-left:.9rem}
+.modal-body li{margin-bottom:.25rem}
+.modal-body code{font-size:.6rem;background:var(--green-l);padding:.05rem .25rem;border-radius:.2rem;border:1px solid #d3e6d7}
+.modal-body b{color:var(--green-d)}
 
 .toast{
-  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1100;
-  background:#111c25;border:1px solid #2a3c49;border-radius:8px;padding:9px 14px;font-size:11px;
-  color:#e2edf4;box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:min(560px,90vw);
+  position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);z-index:1100;
+  background:linear-gradient(180deg,#fff,#f4faf2);border:1px solid var(--line2);border-radius:.5rem;
+  padding:.5rem .8rem;font-size:.65rem;color:var(--ink);box-shadow:var(--sh3);max-width:min(34rem,90vw);
+  border-left:4px solid var(--yellow);
 }
 .toast[hidden]{display:none}
 
-/* ====================== RESPONSIVE ====================== */
+/* ====================== LAYOUT VARIANTS ====================== */
+body.layout-wide .shell{grid-template-columns:19rem minmax(0,1fr)}
+body.layout-wide .inspector{display:none}
+body.layout-wide .tabs,body.layout-wide .insp-head{display:none}
+
+body.layout-focus .shell{grid-template-columns:minmax(0,1fr) 24rem}
+body.layout-focus .rail{display:none}
+
+body.layout-maponly .shell{grid-template-columns:minmax(0,1fr)}
+body.layout-maponly .rail,
+body.layout-maponly .inspector,
+body.layout-maponly .legendbar,
+body.layout-maponly .timeline,
+body.layout-maponly .headline,
+body.layout-maponly .sync-chip,
+body.layout-maponly .fontstep,
+body.layout-maponly .menu-wrap,
+body.layout-maponly #layoutSel,
+body.layout-maponly #btnSync,
+body.layout-maponly #btnAbout,
+body.layout-maponly #btnMobileRail,
+body.layout-maponly #btnMobileInsp{display:none}
+body.layout-maponly{--top:2.9rem}
+body.layout-maponly .topbar{height:2.9rem}
+body.layout-maponly .maponly-exit{display:block}
+body.layout-maponly .map-tag{bottom:.6rem}
+
 @media (max-width:1460px){
-  .shell{grid-template-columns:280px minmax(0,1fr) 348px}
-  .headline{gap:15px}
+  .shell{grid-template-columns:17.5rem minmax(0,1fr) 22rem}
+  .headline{gap:.8rem}
 }
 @media (max-width:1240px){
-  .shell{grid-template-columns:268px minmax(0,1fr)}
+  .shell{grid-template-columns:16.75rem minmax(0,1fr)}
   .inspector{
-    position:fixed;top:var(--top);right:0;bottom:0;width:min(400px,92vw);z-index:800;
-    transform:translateX(102%);transition:transform .22s ease;box-shadow:-18px 0 50px rgba(0,0,0,.5);
+    position:fixed;top:var(--top);right:0;bottom:0;width:min(25rem,92vw);z-index:800;
+    transform:translateX(102%);transition:transform .22s ease;box-shadow:-18px 0 50px rgba(16,60,34,.25);
   }
   body.insp-open .inspector{transform:none}
   body.insp-open .scrim{opacity:1;pointer-events:auto}
   .headline .hs:nth-child(3),.headline .hs:nth-child(4),.headline .hs:nth-child(5){display:none}
-  .sync-chip{max-width:200px}
+  .sync-chip{max-width:12.5rem}
+  .layout-focus .shell{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:1240px){
+  #btnMobileInsp{display:grid}
 }
 @media (max-width:980px){
   .shell{grid-template-columns:minmax(0,1fr)}
+  #btnMobileRail{display:grid}
   .rail{
-    position:fixed;top:var(--top);left:0;bottom:0;width:min(320px,90vw);z-index:800;
-    transform:translateX(-102%);transition:transform .22s ease;box-shadow:18px 0 50px rgba(0,0,0,.5);
+    position:fixed;top:var(--top);left:0;bottom:0;width:min(20rem,90vw);z-index:800;
+    transform:translateX(-102%);transition:transform .22s ease;box-shadow:18px 0 50px rgba(16,60,34,.25);
   }
   body.rail-open .rail{transform:none}
   body.rail-open .scrim{opacity:1;pointer-events:auto}
-  .mobile-only{display:grid!important}
-  #btnMobileRail,#btnMobileInsp{display:grid!important}
   .headline{display:none}
-  .brand-text h1{font-size:15px}
+  .brand-text h1{font-size:.92rem}
   .top-actions .btn.ghost:not(.icon-only){display:none}
-  .sync-chip{max-width:160px}
-  .legendbar{gap:8px;padding:6px 10px}
+  .sync-chip{max-width:10rem}
+  .legendbar{gap:.4rem;padding:.3rem .55rem}
   .lg-note{display:none}
+  #btnMobileRail,#btnMobileInsp{display:grid}
 }
 @media (max-width:640px){
   .brand-text .eyebrow{display:none}
-  .brand-text h1{font-size:13.5px}
-  .shell{grid-template-columns:minmax(0,1fr)}
-  .legendbar{min-height:34px}
+  .brand-text h1{font-size:.84rem}
+  .legendbar{min-height:1.9rem}
   .lg-source{display:none}
-  .tl-chart{height:112px}
+  .tl-chart{height:6.8rem}
   .sync-chip{display:none}
-  .top-actions{gap:5px}
-  .map-tag{font-size:8px}
+  .top-actions{gap:.25rem}
+  .map-tag{font-size:.5rem}
+  .fontstep span{display:none}
 }
 .scrim{
-  position:fixed;inset:var(--top) 0 0 0;background:rgba(3,7,10,.55);z-index:790;
+  position:fixed;inset:var(--top) 0 0 0;background:rgba(10,40,24,.28);z-index:790;
   opacity:0;pointer-events:none;transition:opacity .2s;
 }
 @media (min-width:1241px){.scrim{display:none}}
 
+/* print */
+@media print{
+  body{background:#fff;overflow:visible}
+  .topbar,.rail,.inspector,.timeline,.scrim,.map-tag,.credit,.map-scale-note,.maponly-exit{display:none!important}
+  .shell{display:block;height:auto}
+  .mapcol{display:block}
+  .map-wrap{height:70vh}
+  .legendbar{display:flex}
+}
+
 </style>
 </head>
-<body>
+<body class="theme-light layout-full">
 
 <header class="topbar">
   <div class="brand">
     <div class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 40 40"><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.5 20.2l5 5L28 14.8" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>
+      <svg viewBox="0 0 40 40"><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="currentColor" opacity=".14"/><path d="M20 3 5 10v10c0 8.6 6.2 14.8 15 17 8.8-2.2 15-8.4 15-17V10L20 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.5 20.2l5 5L28 14.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
     <div class="brand-text">
-      <span class="eyebrow">South Asia Terrorism Portal · live data</span>
+      <span class="eyebrow">SATP · live datasheets</span>
       <h1>Khyber Pakhtunkhwa Security Atlas</h1>
     </div>
   </div>
 
   <div class="headline" id="headline">
-    <div class="hs"><span class="hs-num" id="hsIncidents">—</span><span class="hs-lab" id="hsIncidentsLab">incidents</span></div>
-    <div class="hs"><span class="hs-num" id="hsKilled">—</span><span class="hs-lab">killed</span></div>
+    <div class="hs"><span class="hs-num hl" id="hsIncidents">—</span><span class="hs-lab" id="hsIncidentsLab">incidents</span></div>
+    <div class="hs"><span class="hs-num hl" id="hsKilled">—</span><span class="hs-lab">killed</span></div>
     <div class="hs"><span class="hs-num" id="hsCiv">—</span><span class="hs-lab">civilians</span></div>
     <div class="hs"><span class="hs-num" id="hsSec">—</span><span class="hs-lab">security forces</span></div>
     <div class="hs"><span class="hs-num" id="hsMil">—</span><span class="hs-lab">militants</span></div>
@@ -1142,15 +1419,40 @@ table.matrix tr:hover td.rowlab{color:var(--accent2)}
     <button class="sync-chip" id="syncChip" type="button" title="Data status">
       <i class="dot" id="syncDot"></i><span id="syncText">Loading…</span>
     </button>
-    <button class="btn sync" id="btnSync" type="button">Sync SATP</button>
-    <button class="btn ghost" id="btnExport" type="button">CSV</button>
-    <button class="btn ghost icon-only" id="btnMobileRail" type="button" aria-label="Filters">
+
+    <div class="fontstep" role="group" aria-label="Text size">
+      <button id="fsDown" type="button" title="Smaller text" aria-label="Smaller text">A−</button>
+      <span id="fsVal" aria-live="polite">100%</span>
+      <button id="fsUp" type="button" title="Larger text" aria-label="Larger text">A+</button>
+    </div>
+
+    <div class="menu-wrap">
+      <button class="btn" id="btnExport" type="button" aria-haspopup="menu" aria-expanded="false">Export <span class="caret">▾</span></button>
+      <div class="menu" id="exportMenu" role="menu" hidden>
+        <button type="button" role="menuitem" data-export="csv"><b>Yearly SATP table</b><span>Every series, one row per year · CSV</span></button>
+        <button type="button" role="menuitem" data-export="incidents"><b>Visible incidents</b><span>Only what the filters show · CSV</span></button>
+        <button type="button" role="menuitem" data-export="json"><b>Current view</b><span>Years, totals, filters, district · JSON</span></button>
+        <button type="button" role="menuitem" data-export="svg"><b>Timeline chart</b><span>The drawn chart as vector · SVG</span></button>
+        <button type="button" role="menuitem" data-export="print"><b>Print or save PDF</b><span>Opens the print dialogue</span></button>
+        <button type="button" role="menuitem" data-export="link"><b>Copy share link</b><span>Restores this exact view</span></button>
+      </div>
+    </div>
+
+    <select id="layoutSel" class="select compact" aria-label="Layout" title="Map only hides every panel except the map">
+      <option value="full">Layout · full</option>
+      <option value="wide">Layout · map + filters</option>
+      <option value="focus">Layout · map + details</option>
+      <option value="maponly">Layout · map only</option>
+    </select>
+
+    <button class="btn ghost" id="btnSync" type="button">Sync SATP</button>
+    <button class="btn ghost" id="btnAbout" type="button">Method</button>
+    <button class="btn ghost icon-only" id="btnMobileRail" type="button" aria-label="Filters" title="Filters">
       <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
     </button>
-    <button class="btn ghost icon-only" id="btnMobileInsp" type="button" aria-label="Details">
+    <button class="btn ghost icon-only" id="btnMobileInsp" type="button" aria-label="Details" title="Details">
       <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
     </button>
-    <button class="btn ghost" id="btnAbout" type="button">Method</button>
   </div>
 </header>
 
@@ -1163,29 +1465,49 @@ table.matrix tr:hover td.rowlab{color:var(--accent2)}
       <section class="block period">
         <div class="block-head">
           <h2>Period</h2>
-          <button class="link" id="btnAllYears" type="button" aria-pressed="true">All years</button>
+          <div class="head-links">
+            <button class="link" id="btnYearsAll" type="button" title="Select all 27 years">All</button>
+            <button class="link" id="btnYearsClear" type="button" title="Keep only the latest selected year">Clear</button>
+          </div>
         </div>
+
         <div class="year-display">
           <button class="yr-step" id="yrPrev" type="button" aria-label="Previous year">‹</button>
-          <div class="yr-main"><span id="yearBig">2026</span><small id="yearSub">cumulative · 2000–2026</small></div>
+          <div class="yr-main">
+            <span id="yearBig">2000–26</span>
+            <small id="yearSub">all years · 27</small>
+          </div>
           <button class="yr-step" id="yrNext" type="button" aria-label="Next year">›</button>
         </div>
-        <input type="range" id="yearRange" min="2000" max="2026" step="1" value="2026" aria-label="Year">
+
+        <div class="year-chips" id="yearChips" role="group" aria-label="Select years"></div>
+        <p class="note tiny">Click to add or remove a year. Shift-click selects a range. The dashed slider sets a span from 2000.</p>
+
+        <input type="range" id="yearRange" min="2000" max="2026" step="1" value="2026" aria-label="Span up to year">
         <div class="year-scale"><span>2000</span><span>2009 peak</span><span>2026</span></div>
+
         <div class="row gap">
           <button class="btn small" id="btnPlay" type="button">▶ Play years</button>
           <button class="btn small ghost" id="btnLatest" type="button">Latest</button>
+          <button class="btn small ghost" id="btnLast5" type="button" title="Select 2022–2026">Last 5</button>
         </div>
       </section>
 
       <section class="block">
-        <div class="block-head"><h2>Map overlays</h2><span class="hint" id="overlayCount">6 on</span></div>
-        <label class="check"><input type="checkbox" id="ovDistricts" checked><span class="sw sw-district"></span><span class="txt">District shading<small>SATP or GTD intensity</small></span></label>
-        <label class="check"><input type="checkbox" id="ovBorders" checked><span class="sw sw-border"></span><span class="txt">Boundaries &amp; labels<small>District names and values</small></span></label>
-        <label class="check"><input type="checkbox" id="ovFata" checked><span class="sw sw-fata"></span><span class="txt">Erstwhile FATA<small>Hatched, merged in 2018</small></span></label>
-        <label class="check"><input type="checkbox" id="ovPins" checked><span class="sw sw-pin"></span><span class="txt">Incident pins<small>GTD records, 2004–2020</small></span></label>
-        <label class="check"><input type="checkbox" id="ovHeat"><span class="sw sw-heat"></span><span class="txt">Density heat<small>Smoothed incident surface</small></span></label>
-        <label class="check"><input type="checkbox" id="ovNeighbours"><span class="sw sw-neigh"></span><span class="txt">Neighbouring regions<small>Afghanistan, Punjab, Sindh…</small></span></label>
+        <div class="block-head"><h2>Map layers</h2><span class="hint" id="overlayCount">4 on</span></div>
+        <p class="note tiny">Any combination can be on at once.</p>
+        <div class="layer-grid">
+          <label class="layer" data-layer="districts"><input type="checkbox" id="ovDistricts" checked><span class="layer-box"><i class="sw sw-district"></i></span><span class="txt">District shading</span></label>
+          <label class="layer" data-layer="borders"><input type="checkbox" id="ovBorders" checked><span class="layer-box"><i class="sw sw-border"></i></span><span class="txt">Boundaries &amp; labels</span></label>
+          <label class="layer" data-layer="fata"><input type="checkbox" id="ovFata" checked><span class="layer-box"><i class="sw sw-fata"></i></span><span class="txt">Erstwhile FATA</span></label>
+          <label class="layer" data-layer="pins"><input type="checkbox" id="ovPins" checked><span class="layer-box"><i class="sw sw-pin"></i></span><span class="txt">Incident pins</span></label>
+          <label class="layer" data-layer="heat"><input type="checkbox" id="ovHeat"><span class="layer-box"><i class="sw sw-heat"></i></span><span class="txt">Density heat</span></label>
+          <label class="layer" data-layer="neighbours"><input type="checkbox" id="ovNeighbours"><span class="layer-box"><i class="sw sw-neigh"></i></span><span class="txt">Neighbouring regions</span></label>
+        </div>
+        <div class="row gap tight">
+          <button class="btn tiny ghost" id="btnLayersAll" type="button">All layers</button>
+          <button class="btn tiny ghost" id="btnLayersMap" type="button">Map only</button>
+        </div>
         <div class="select-row">
           <label for="shadeMetric">Shade districts by</label>
           <select id="shadeMetric" class="select">
@@ -1215,13 +1537,13 @@ table.matrix tr:hover td.rowlab{color:var(--accent2)}
 
       <section class="block">
         <div class="block-head"><h2>SATP series</h2><button class="link" id="btnAllSeries" type="button">All</button></div>
-        <p class="note">Show or hide each dataset in the charts, the year matrix and the timeline.</p>
+        <p class="note tiny">Each series is an independent switch for the charts, year matrix and timeline.</p>
         <div id="seriesToggles" class="series-toggles"></div>
       </section>
 
       <section class="block">
         <div class="block-head"><h2>Incident categories</h2><button class="link" id="btnAllCats" type="button">All</button></div>
-        <p class="note">Filters the GTD incident pins only — the SATP datasheets publish totals, not per-attack categories.</p>
+        <p class="note tiny">Filters the GTD incident pins only — SATP publishes totals, not per-attack categories.</p>
         <div id="catToggles" class="cat-toggles"></div>
       </section>
 
@@ -1255,12 +1577,14 @@ table.matrix tr:hover td.rowlab{color:var(--accent2)}
       <div class="map-tag" id="mapTag">SATP fatalities · cumulative</div>
       <div class="map-scale-note" id="mapScaleNote"></div>
       <div class="credit" id="credit">Basemap © Google</div>
+      <button class="maponly-exit" id="btnExitMapOnly" type="button">▣ Show panels</button>
     </div>
     <div class="timeline" id="timeline">
       <div class="tl-head">
         <div class="tl-title">Yearly record <span id="tlRange">2000–2026</span></div>
         <div class="tl-legend" id="tlLegend"></div>
         <div class="tl-tools">
+          <span class="tl-selected" id="tlSelected">27/27 years</span>
           <label class="tiny-check"><input type="checkbox" id="tlLabels" checked> peaks</label>
           <button class="btn tiny ghost" id="tlToggle" type="button" aria-expanded="true">Hide</button>
         </div>
@@ -1346,31 +1670,31 @@ L.HeatLayer=(L.Layer?L.Layer:L.Class).extend({initialize:function(t,i){this._lat
 
 // ---------------------------------------------------------------- constants
 const SERIES = [
-  {id:'fatalities', name:'Fatalities',            color:'#e0533d', unit:'killed',      axis:'right', key:'total'},
-  {id:'incidents',  name:'Terrorism incidents',    color:'#5aa9e6', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'major',      name:'Major incidents',        color:'#f0a35e', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'suicide',    name:'Suicide attacks',        color:'#a78bfa', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'explosions', name:'Explosions',             color:'#ffd166', unit:'incidents',   axis:'left',  key:'incidents'},
-  {id:'arrests',    name:'Arrests',                color:'#43c6b7', unit:'people',      axis:'left',  key:'arrested'},
-  {id:'arms',       name:'Arms recoveries',        color:'#8ac926', unit:'recoveries',  axis:'left',  key:'recoveries'},
-  {id:'surrender',  name:'Surrenders',             color:'#e879f9', unit:'people',      axis:'left',  key:'surrendered'}
+  {id:'fatalities', name:'Fatalities',            color:'#b3242f', unit:'killed',      axis:'right', key:'total'},
+  {id:'incidents',  name:'Terrorism incidents',    color:'#0d6b3f', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'major',      name:'Major incidents',        color:'#d98a00', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'suicide',    name:'Suicide attacks',        color:'#6b4bb5', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'explosions', name:'Explosions',             color:'#e0b400', unit:'incidents',   axis:'left',  key:'incidents'},
+  {id:'arrests',    name:'Arrests',                color:'#118a7a', unit:'people',      axis:'left',  key:'arrested'},
+  {id:'arms',       name:'Arms recoveries',        color:'#5c8a1f', unit:'recoveries',  axis:'left',  key:'recoveries'},
+  {id:'surrender',  name:'Surrenders',             color:'#b03a86', unit:'people',      axis:'left',  key:'surrendered'}
 ];
 const SERIES_BY_ID = Object.fromEntries(SERIES.map(s => [s.id, s]));
 
 const CATS = [
-  {id:'ied',      label:'Bomb / IED',      color:'#ff9f1c'},
-  {id:'armed',    label:'Armed assault',   color:'#4cc9f0'},
-  {id:'suicide',  label:'Suicide bombing', color:'#ff4d6d'},
-  {id:'targeted', label:'Targeted killing',color:'#f72585'},
-  {id:'rocket',   label:'Rocket / mortar', color:'#ffd166'},
-  {id:'kidnap',   label:'Kidnapping',      color:'#b5179e'},
-  {id:'sabotage', label:'Sabotage',        color:'#8ac926'},
-  {id:'drone',    label:'Drone strike',    color:'#c4b5fd'},
-  {id:'other',    label:'Other',           color:'#9aa5b1'}
+  {id:'ied',      label:'Bomb / IED',      color:'#e07a00'},
+  {id:'armed',    label:'Armed assault',   color:'#1c7fb8'},
+  {id:'suicide',  label:'Suicide bombing', color:'#c8102e'},
+  {id:'targeted', label:'Targeted killing',color:'#a4238a'},
+  {id:'rocket',   label:'Rocket / mortar', color:'#c9a200'},
+  {id:'kidnap',   label:'Kidnapping',      color:'#7b3fb0'},
+  {id:'sabotage', label:'Sabotage',        color:'#4f7d16'},
+  {id:'drone',    label:'Drone strike',    color:'#5d6f8c'},
+  {id:'other',    label:'Other',           color:'#7f8f86'}
 ];
 const CAT_BY_ID = Object.fromEntries(CATS.map(c => [c.id, c]));
 
-const RAMP = ['#3d4b55','#f3e2bd','#f1c57e','#e9a052','#dc6f3f','#b93a3c','#7a1023'];
+const RAMP = ['#cde3c3','#e8eec2','#f7e29a','#f3c65e','#e99a3f','#d0603a','#9c2530'];
 const FATA = new Set(['Bajaur','Khyber','Kurram','Mohmand','North Waziristan','Orakzai','South Waziristan']);
 const SATP_ALIAS = {
   'D. I. Khan':'Dera Ismail Khan', 'Battagram':'Batagram', 'Buner':'Buner', 'Tor Ghar':'Tor Ghar',
@@ -1387,13 +1711,15 @@ const OFFLINE = !!window.__ATLAS__;
 const state = {
   satp:null, byYear:{}, districts:[], districtByName:{}, geoFeatures:[], outline:null, neighbours:null,
   gtdStats:null, incidents:[], incidentsLoaded:false, incidentsPromise:null,
+  years:new Set(YEARS), spanMode:true, spanEnd:2026, lastYearClick:2026,
   year:2026, allYears:true, series:new Set(['fatalities','incidents','major','suicide']),
   cats:new Set(CATS.map(c=>c.id)), minKilled:0,
   ov:{districts:true, borders:true, fata:true, pins:true, heat:false, neighbours:false},
   shade:'gtd_n',
   tab:'year', district:null, incident:null, search:'',
   playing:false, playTimer:null, server:false, status:null, fetchedAt:null,
-  tlCollapsed:false, tlLabels:true
+  tlCollapsed:false, tlLabels:true,
+  fontScale:1, layout:'full'
 };
 
 // ---------------------------------------------------------------- utils
@@ -1438,14 +1764,37 @@ function buildYearIndex(){
   });
 }
 
-/** rows for the current period: the whole span when cumulative, else the one year */
-function periodRows(){
-  const end = state.year;
-  return YEARS.filter(y => y <= end).map(y => state.byYear[y]);
+/** the years currently selected, ascending */
+function selectedYears(){ return YEARS.filter(y => state.years.has(y)); }
+function isContiguous(){ const ys = selectedYears(); return ys.length > 0 && ys[ys.length-1] - ys[0] + 1 === ys.length; }
+function selectionIsAll(){ return state.years.size === YEARS.length; }
+
+/** short label for a selection: 2015 · 2000–26 · 9 years · 2009, 2014… */
+function selLabel(){
+  const ys = selectedYears();
+  if(!ys.length) return 'no years';
+  if(ys.length === YEARS.length) return '2000–2026';
+  if(ys.length === 1) return String(ys[0]);
+  if(isContiguous()) return ys[0] + '–' + String(ys[ys.length-1]).slice(2);
+  return ys.length + ' years';
 }
 
+/** longer label used in the header and the legend */
+function selLong(){
+  const ys = selectedYears();
+  if(!ys.length) return 'no years selected';
+  if(ys.length === YEARS.length) return 'all years · 2000–2026';
+  if(ys.length === 1) return String(ys[0]);
+  if(isContiguous()) return ys[0] + '–' + ys[ys.length-1];
+  if(ys.length <= 4) return ys.join(', ');
+  return ys.length + ' years · ' + ys[0] + ' to ' + ys[ys.length-1];
+}
+
+/** rows for the current selection */
+function periodRows(){ return selectedYears().map(y => state.byYear[y]); }
+
 function periodTotals(){
-  const rows = state.allYears ? periodRows() : [state.byYear[state.year]];
+  const rows = periodRows();
   const t = {
     fatalities:{total:0,civilians:0,security:0,militants:0,ns:0,incidents:0},
     incidents:0, major:{incidents:0,killed:0,injured:0}, suicide:{incidents:0,killed:0},
@@ -1486,8 +1835,7 @@ function gtdDistrictValue(name, field){
   if(!d) return 0;
   let v = 0;
   for(const y of Object.keys(d)){
-    if(+y > state.year) continue;
-    if(!state.allYears && +y !== state.year) continue;
+    if(!state.years.has(+y)) continue;
     const row = d[y] || {};
     v += (field === 'n' ? row.n : field === 'k' ? row.k : row.j) || 0;
   }
@@ -1506,7 +1854,7 @@ function satpDistrictAgg(name){
   const key = SATP_ALIAS[name] || name;
   const rec = (state.satp.districts || {})[key];
   if(!rec || !rec.fatalities) return null;
-  const rows = rec.fatalities.filter(r => r.year <= state.year && (state.allYears || r.year === state.year));
+  const rows = rec.fatalities.filter(r => state.years.has(r.year));
   return {
     total: sum(rows, r=>r.total), civilians: sum(rows, r=>r.civilians),
     security: sum(rows, r=>r.security), militants: sum(rows, r=>r.militants),
@@ -1598,14 +1946,14 @@ function initMap(){
   // neighbouring regions (optional, under the province)
   if(state.neighbours){
     neighbourLayer = L.geoJSON(state.neighbours, {
-      style:{color:'#2a3b47', weight:1, fillColor:'#0d171e', fillOpacity:.55, dashArray:'2 4'},
+      style:{color:'#a9c3a8', weight:1, fillColor:'#e4eee0', fillOpacity:.6, dashArray:'2 4'},
       interactive:false
     });
     if(state.ov.neighbours) neighbourLayer.addTo(map);
   }
 
   if(state.outline){
-    L.geoJSON(state.outline, {style:{color:'#cfe0ec', weight:2, opacity:.5, fill:false}, interactive:false}).addTo(map);
+    L.geoJSON(state.outline, {style:{color:'#0d6b3f', weight:2.4, opacity:.75, fill:false}, interactive:false}).addTo(map);
   }
 
   buildDistrictLayer();
@@ -1629,7 +1977,8 @@ function buildDistrictLayer(){
     renderer:districtRenderer,
     style:styleDistrict,
     onEachFeature:(f, layer)=>{
-      layer.on('click', ()=>selectDistrict(f.properties.name));
+      layer.on('click', ()=>{ layer.bringToFront(); selectDistrict(f.properties.name); });
+      layer.on('add', ()=>{ if(layer._path) layer._path.style.cursor = 'pointer'; });
       layer.bindTooltip(()=>districtTooltip(f.properties.name), {sticky:true, direction:'top', opacity:1});
       layer.on('mouseout', ()=>layer.closeTooltip());
     }
@@ -1650,7 +1999,7 @@ function buildFataLayer(){
       if(!l._path) return;
       injectHatch();
       l._path.setAttribute('fill', 'url(#fataHatch)');
-      l._path.setAttribute('fill-opacity', '.5');
+      l._path.setAttribute('fill-opacity', '.38');
       l._path.setAttribute('stroke', 'none');
       l._path.style.pointerEvents = 'none';
     });
@@ -1665,7 +2014,7 @@ function injectHatch(){
   hatchDefs = document.createElementNS('http://www.w3.org/2000/svg','defs');
   hatchDefs.innerHTML = '<pattern id="fataHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">' +
     '<rect width="7" height="7" fill="none"></rect>' +
-    '<line x1="0" y1="0" x2="0" y2="7" stroke="#dbe7f0" stroke-width="1.15" stroke-opacity=".5"></line></pattern>';
+    '<line x1="0" y1="0" x2="0" y2="7" stroke="#0d6b3f" stroke-width="1.15" stroke-opacity=".42"></line></pattern>';
   svg.appendChild(hatchDefs);
 }
 
@@ -1677,10 +2026,10 @@ function styleDistrict(f){
   const base = RAMP[idx] || RAMP[0];
   return {
     fillColor: base,
-    fillOpacity: v == null ? .16 : (selected ? .9 : .72),
-    color: selected ? '#ffffff' : (FATA.has(p.name) ? 'rgba(255,255,255,.62)' : 'rgba(255,255,255,.45)'),
-    weight: selected ? 2.6 : (FATA.has(p.name) ? 1.3 : 1),
-    dashArray: FATA.has(p.name) ? '4 4' : null
+    fillOpacity: v == null ? .18 : (selected ? .82 : .7),
+    color: selected ? '#d92332' : (FATA.has(p.name) ? 'rgba(13,107,63,.55)' : 'rgba(13,107,63,.32)'),
+    weight: selected ? 2 : (FATA.has(p.name) ? 1.3 : 1),
+    dashArray: selected ? null : (FATA.has(p.name) ? '4 4' : null)
   };
 }
 
@@ -1691,7 +2040,7 @@ function binIndex(v, edges){
 
 let _breaks = null, _breaksKey = '';
 function classBreaks(){
-  const key = state.year + '|' + state.allYears + '|' + state.shade + '|' + hasSatpDistricts();
+  const key = selectedYears().join(',') + '|' + state.shade + '|' + hasSatpDistricts();
   if(_breaks && _breaksKey === key) return _breaks;
   const vals = state.districts.map(p => districtValue(p.name)).filter(v => v != null && v > 0).sort((a,b)=>a-b);
   let breaks;
@@ -1719,17 +2068,17 @@ function districtTooltip(name){
   const p = state.districtByName[name];
   const satp = satpDistrictAgg(name);
   const gtdN = gtdDistrictValue(name,'n');
-  const a = state.allYears ? '2000–'+state.year : String(state.year);
+  const a = selLabel();
   const rows = [
     ['Period', a],
     ['GTD incidents', num(gtdN)]
   ];
   if(satp) rows.splice(1,0,['SATP killed', num(satp.total)],['SATP incidents', num(satp.incidents)]);
   return '<div style="min-width:160px">' +
-    '<div style="font-size:11.5px;font-weight:600">' + esc(p.display) + (FATA.has(name)?' · FATA':'') + '</div>' +
-    '<div style="font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:#8ba0b0;margin:2px 0 5px">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + '</div>' +
-    rows.map(r => '<div style="display:flex;justify-content:space-between;gap:14px;font-size:10px;color:#b9cbd8"><span>' + r[0] + '</span><b style="font-family:var(--mono);color:#f7c78f">' + r[1] + '</b></div>').join('') +
-    '<div style="font-size:8.5px;color:#61798a;margin-top:4px">' + esc(shadeInfo().label) + ': <b style="color:#e9f0f6">' + (districtValue(name)==null?'no data':num(districtValue(name))) + '</b></div>' +
+    '<div style="font-size:.72rem;font-weight:700">' + esc(p.display) + (FATA.has(name)?' · FATA':'') + '</div>' +
+    '<div style="font-size:.5rem;letter-spacing:.09em;text-transform:uppercase;color:#7f978a;margin:.1rem 0 .3rem">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + '</div>' +
+    rows.map(r => '<div style="display:flex;justify-content:space-between;gap:.8rem;font-size:.62rem;color:#2b4635"><span>' + r[0] + '</span><b style="color:#0d6b3f">' + r[1] + '</b></div>').join('') +
+    '<div style="font-size:.52rem;color:#7f978a;margin-top:.2rem">' + esc(shadeInfo().label) + ': <b style="color:#10281a">' + (districtValue(name)==null?'no data':num(districtValue(name))) + '</b></div>' +
     '</div>';
 }
 
@@ -1757,9 +2106,10 @@ function renderLabels(){
     placed.push(box);
     const idx = it.v == null ? 0 : binIndex(it.v, breaks.breaks);
     const val = it.v == null ? '—' : num(it.v);
+    const selected = state.district === it.p.name;
     const icon = L.divIcon({
-      className:'district-label' + (idx <= 1 ? ' dim' : ''),
-      html: '<span>' + esc(it.p.display) + '</span><span class="v">' + val + '</span>',
+      className:'district-label' + (idx <= 1 ? ' dim' : '') + (selected ? ' sel' : ''),
+      html: '<span>' + esc(it.p.display) + (selected ? ' <i class="selected-tag">selected</i>' : '') + '</span><span class="v">' + val + '</span>',
       iconSize:[w, h], iconAnchor:[w/2, h/2]
     });
     L.marker([it.p.cy, it.p.cx], {icon, interactive:false, keyboard:false}).addTo(labelLayer);
@@ -1783,12 +2133,12 @@ function loadIncidents(){
 }
 
 function filteredIncidents(){
+  const wide = state.years.size > 6;
   const list = state.incidents.filter(i => {
-    if(!state.allYears && i.year !== state.year) return false;
-    if(state.allYears && i.year > state.year) return false;
+    if(!state.years.has(i.year)) return false;
     if(!state.cats.has(i.cat)) return false;
     if(i.killed < state.minKilled) return false;
-    if(state.allYears && i.killed < 5) return false;   // keep the cumulative view light
+    if(wide && i.killed < 5) return false;   // keep a many-year view light
     return true;
   });
   if(state.search.trim()){
@@ -1808,12 +2158,12 @@ function buildPins(){
     const r = clamp(2.6 + Math.sqrt(i.killed) * 1.45, 2.4, 15);
     const c = (CAT_BY_ID[i.cat] || CAT_BY_ID.other).color;
     const mk = L.circleMarker([i.lat, i.lng], {
-      radius:r, color:'rgba(6,11,15,.85)', weight:i.killed>=10?1.6:.9,
-      fillColor:c, fillOpacity:.88, renderer:overlayRenderer
+      radius:r, color:'rgba(16,40,26,.75)', weight:i.killed>=10?1.6:.9,
+      fillColor:c, fillOpacity:.9, renderer:overlayRenderer
     });
     mk.bindTooltip('<b>' + esc(i.place || i.district) + '</b> · ' + shortDate(i.date) +
       '<br><span style="color:' + c + '">' + esc((CAT_BY_ID[i.cat]||CAT_BY_ID.other).label) + '</span>' +
-      '<div style="color:#9fb1bf;font-size:9.5px;margin-top:2px">' + num(i.killed) + ' killed · ' + num(i.injured) + ' injured</div>',
+      '<div style="color:#5c7767;font-size:.55rem;margin-top:.12rem">' + num(i.killed) + ' killed · ' + num(i.injured) + ' injured</div>',
       {direction:'top', opacity:1});
     mk.on('click', e => { L.DomEvent.stopPropagation(e); state.incident = i.id; setTab('incidents'); });
     mk._inc = i;
@@ -1830,7 +2180,7 @@ function buildHeat(){
   const pts = filteredIncidents().map(i => [i.lat, i.lng, clamp((i.killed + i.injured/3) / 20, .15, 1)]);
   if(heatLayer) map.removeLayer(heatLayer);
   heatLayer = L.heatLayer(pts, {radius:22, blur:19, maxZoom:11, minOpacity:.22,
-    gradient:{.15:'#2b4a5e',.35:'#5aa9e6',.55:'#ffd166',.75:'#f0a35e',1:'#e0533d'}}).addTo(map);
+    gradient:{.15:'#7fc4a0',.35:'#ffd23f',.55:'#f2a93b',.75:'#e0632f',1:'#b3242f'}}).addTo(map);
 }
 
 // ---------------------------------------------------------------- vector basemap (offline)
@@ -1846,7 +2196,7 @@ function makeVectorLayer(){
       const b = this._tileCoordsToBounds(coords);
       const origin = map.project(b.getNorthWest(), coords.z);
       const P = (lng,lat) => map.project([lat,lng],coords.z).subtract(origin);
-      ctx.fillStyle = '#0a1218'; ctx.fillRect(0,0,size.x,size.y);
+      ctx.fillStyle = '#eef5ea'; ctx.fillRect(0,0,size.x,size.y);
       const draw = (geom) => {
         if(!geom) return;
         const polys = geom.type === 'Polygon' ? [geom.coordinates] : geom.type === 'MultiPolygon' ? geom.coordinates : [];
@@ -1857,13 +2207,13 @@ function makeVectorLayer(){
         }));
       };
       if(state.neighbours){
-        ctx.fillStyle = '#0c161d'; ctx.strokeStyle = '#1d2c36'; ctx.lineWidth = 1;
+        ctx.fillStyle = '#e2ecdd'; ctx.strokeStyle = '#cfe0c9'; ctx.lineWidth = 1;
         state.neighbours.features.forEach(f => { draw(f.geometry); ctx.fill(); ctx.stroke(); });
       }
       const og = outlineGeom();
-      ctx.fillStyle = '#101d26'; draw(og); ctx.fill();
-      ctx.strokeStyle = 'rgba(206,224,235,.35)'; ctx.lineWidth = 1.4; draw(og); ctx.stroke();
-      ctx.fillStyle = 'rgba(126,150,166,.5)'; ctx.font = '9px system-ui';
+      ctx.fillStyle = '#f7fbf3'; draw(og); ctx.fill();
+      ctx.strokeStyle = 'rgba(13,107,63,.45)'; ctx.lineWidth = 1.4; draw(og); ctx.stroke();
+      ctx.fillStyle = 'rgba(92,119,103,.75)'; ctx.font = '9px Candara, Segoe UI, sans-serif';
       for(let lon = Math.ceil(b.getWest()); lon <= b.getEast(); lon++){
         const a = P(lon, b.getNorth());
         if(a.x > 4 && a.x < size.x - 30) ctx.fillText(Math.abs(lon)+'°E', a.x+3, 11);
@@ -1907,16 +2257,16 @@ function renderLegend(){
   $('#lgSource').textContent = info.usingSatp ? 'SATP · districts' : 'GTD · districts';
   $('#lgNote').textContent = info.pending
     ? 'SATP district series not synced yet — showing the GTD incident record'
-    : (state.allYears ? 'Cumulative to ' + state.year : 'Year ' + state.year);
+    : selLong();
   const tag = $('#mapTag');
-  tag.textContent = info.label + ' · ' + (state.allYears ? '2000–' + state.year : state.year) + ' · ' + info.source;
+  tag.textContent = info.label + ' · ' + selLabel() + ' · ' + info.source;
 }
 
 // ---------------------------------------------------------------- header
 function renderHeader(){
   const t = periodTotals();
   $('#hsIncidents').textContent = num(t.incidents);
-  $('#hsIncidentsLab').textContent = state.allYears ? 'incidents 2000–' + state.year : 'incidents ' + state.year;
+  $('#hsIncidentsLab').textContent = 'incidents · ' + selLabel();
   $('#hsKilled').textContent = num(t.fatalities.total);
   $('#hsCiv').textContent = num(t.fatalities.civilians);
   $('#hsSec').textContent = num(t.fatalities.security);
@@ -1941,6 +2291,8 @@ function renderTimeline(){
   const bw = pw / rows.length;
   const maxL = Math.max(50, ...counts.map(s => Math.max(...rows.map(r => seriesValue(s.id, r)))));
   const maxR = Math.max(50, ...rows.map(r => r.fatalities.total));
+  const fx0 = () => M.l + (selectedYears()[0] - 2000) * bw;
+  const fx1 = () => { const ys = selectedYears(); return (ys[ys.length-1] - ys[0] + 1) * bw; };
   const x = y => M.l + (y - 2000 + .5) * bw;
   const yL = v => M.t + ph - (v / maxL) * ph;
   const yR = v => M.t + ph - (v / maxR) * ph;
@@ -1953,17 +2305,22 @@ function renderTimeline(){
     s += '<text class="tl-axis" x="' + (M.l-4) + '" y="' + (gy+3) + '" text-anchor="end">' + compact(maxL*(3-i)/3) + '</text>';
     if(fat) s += '<text class="tl-axis" x="' + (W-M.r+5) + '" y="' + (gy+3) + '">' + compact(maxR*(3-i)/3) + '</text>';
   }
-  // focus band
-  const fx = M.l + (state.year - 2000) * bw;
-  s += '<rect class="tl-focus" x="' + fx + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
+  // the selected years sit on a yellow band
+  if(state.years.size < YEARS.length){
+    rows.forEach((r,i) => {
+      if(!state.years.has(r.year)) return;
+      s += '<rect class="tl-focus" x="' + (M.l + i*bw) + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
+    });
+    s += '<rect x="' + (fx0()) + '" y="' + (M.t-4) + '" width="' + (fx1()) + '" height="2" rx="1" fill="#d9ad12"/>';
+  }
 
   // bars: terrorism incidents
   if(state.series.has('incidents')){
     rows.forEach((r,i) => {
       const h = (r.incidents.incidents / maxL) * ph;
-      s += '<rect class="tl-bar" x="' + (M.l + i*bw + Math.min(2, bw*.12)) + '" y="' + (M.t+ph-h) +
+      s += '<rect class="tl-bar' + (state.years.has(r.year) ? ' on' : '') + '" x="' + (M.l + i*bw + Math.min(2, bw*.12)) + '" y="' + (M.t+ph-h) +
         '" width="' + Math.max(1, bw - Math.min(4, bw*.24)) + '" height="' + Math.max(1,h) + '" rx="' + Math.min(1.5,bw/6) +
-        '" fill="#22405a" data-y="' + r.year + '"><title>' + r.year + ': ' + num(r.incidents.incidents) + ' incidents</title></rect>';
+        '" data-y="' + r.year + '"><title>' + r.year + ': ' + num(r.incidents.incidents) + ' incidents</title></rect>';
     });
   }
   // lines
@@ -1990,14 +2347,14 @@ function renderTimeline(){
   // year ticks
   rows.forEach((r,i) => {
     if(r.year % 2 === 0 || r.year === state.year)
-      s += '<text class="tl-axis" x="' + x(r.year) + '" y="' + (H-4) + '" text-anchor="middle" fill="' + (r.year===state.year?'#f0a35e':'#4f6473') + '">' + (r.year % (bw<17?4:2) === 0 ? "'" + String(r.year).slice(2) : '') + '</text>';
+      s += '<text class="tl-axis" x="' + x(r.year) + '" y="' + (H-4) + '" text-anchor="middle" fill="' + (state.years.has(r.year)?'#0d6b3f':'#9aae9f') + '">' + (r.year % (bw<17?4:2) === 0 ? "'" + String(r.year).slice(2) : '') + '</text>';
     s += '<rect class="tl-year-hit" data-y="' + r.year + '" x="' + (M.l + i*bw) + '" y="' + M.t + '" width="' + bw + '" height="' + ph + '"/>';
   });
   s += '</svg>';
   host.innerHTML = s;
 
   host.querySelectorAll('.tl-year-hit').forEach(el => {
-    el.addEventListener('click', () => { setYear(+el.dataset.y, false); });
+    el.addEventListener('click', e => { toggleYear(+el.dataset.y, e.shiftKey); });
     el.addEventListener('mouseenter', () => showTip(+el.dataset.y, host));
     el.addEventListener('mousemove', e => moveTip(e, host));
     el.addEventListener('mouseleave', hideTip);
@@ -2014,7 +2371,7 @@ function showTip(year, host){
   const r = state.byYear[year];
   if(!r) return;
   if(!tlTip){ tlTip = document.createElement('div'); tlTip.className = 'tl-tip'; }
-  tlTip.innerHTML = '<b>' + year + '</b>' + SERIES.filter(s=>state.series.has(s.id)).map(s =>
+  tlTip.innerHTML = '<b>' + year + (state.years.has(year) ? ' ✓' : '') + '</b>' + SERIES.filter(s=>state.series.has(s.id)).map(s =>
     '<div class="r"><span>' + s.name + '</span><span>' + num(seriesValue(s.id, r)) + '</span></div>'
   ).join('');
   host.appendChild(tlTip);
@@ -2052,7 +2409,7 @@ function delta(cur, prev){
 
 function renderYearTab(el){
   const t = periodTotals();
-  const single = !state.allYears;
+  const single = state.years.size === 1;
   const prev = single ? state.byYear[state.year-1] : null;
   const dK = single ? delta(t.fatalities.total, prev ? prev.fatalities.total : null) : null;
   const dC = single ? delta(t.fatalities.civilians, prev ? prev.fatalities.civilians : null) : null;
@@ -2061,8 +2418,8 @@ function renderYearTab(el){
 
   el.innerHTML =
     '<div class="kicker">' + (single ? 'Year in review' : 'Cumulative record') + '</div>' +
-    '<div class="h2">' + state.year + '</div>' +
-    '<div class="sub">' + (single ? 'single year · SATP datasheets' : '2000–' + state.year + ' · ' + (state.year-1999) + ' years') + '</div>' +
+    '<div class="h2">' + esc(selLong()) + '</div>' +
+    '<div class="sub">' + (single ? 'single year · SATP datasheets' : state.years.size + ' of 27 years · SATP datasheets') + '</div>' +
     '<div class="kpi-grid" style="margin-top:12px">' +
       kpi('Killed', t.fatalities.total, dK) +
       kpi('Civilians', t.fatalities.civilians, dC) +
@@ -2077,8 +2434,8 @@ function renderYearTab(el){
       ? '<div class="section"><div class="section-head"><h3>Who was killed</h3><span class="sub">attack type · ' + (single?'year':'span') + '</span></div>' + renderVictimSplit(t) + '</div>'
       : '') +
     '<div class="section"><div class="section-head"><h3>Reading this</h3></div>' +
-      '<div class="note" style="font-size:9.5px;color:#61798a;line-height:1.6">SATP counts militants killed in security operations inside the fatality total, so the bars and the fatality line move apart sharply in years of heavy operations (2009, 2015, 2025). The atlas reports them separately rather than merging them.</div></div>';
-  $$('#inspBody .matrix [data-y]').forEach(cell => cell.addEventListener('click', () => setYear(+cell.dataset.y, false)));
+      '<div class="note">SATP counts militants killed in security operations inside the fatality total, so the bars and the fatality line move apart sharply in years of heavy operations (2009, 2015, 2025). The atlas reports them separately rather than merging them.</div></div>';
+  $$('#inspBody .matrix [data-y]').forEach(cell => cell.addEventListener('click', e => toggleYear(+cell.dataset.y, e.shiftKey)));
 }
 
 function kpi(label, value, d){
@@ -2090,7 +2447,7 @@ function renderMatrix(){
   const rows = SERIES.filter(s => state.series.has(s.id));
   if(!rows.length) return '<div class="empty">No series selected. Turn one on in the left rail.</div>';
   let html = '<div class="matrix-wrap"><table class="matrix"><thead><tr><th></th>';
-  YEARS.forEach(y => { html += '<th data-y="' + y + '" class="' + (y===state.year?'cur':'') + '">' + String(y).slice(2) + '</th>'; });
+  YEARS.forEach(y => { html += '<th data-y="' + y + '" class="' + (state.years.has(y)?'in ':'') + (y===state.year?'cur':'') + '">' + String(y).slice(2) + '</th>'; });
   html += '</tr></thead><tbody>';
   rows.forEach(s => {
     const vals = YEARS.map(y => seriesValue(s.id, state.byYear[y]));
@@ -2100,7 +2457,7 @@ function renderMatrix(){
       const v = vals[i];
       const a = v ? Math.max(.1, Math.pow(v/max, .65)) : 0;
       const bg = v ? 'rgba(240,163,94,' + a.toFixed(2) + ')' : 'transparent';
-      html += '<td data-y="' + y + '" class="' + (y===state.year?'cur':'') + '" style="background:' + bg + '">' + (v ? compact(v) : '·') + '</td>';
+      html += '<td data-y="' + y + '" class="' + (state.years.has(y)?'in ':'') + (y===state.year?'cur':'') + '" style="background:' + bg + '">' + (v ? compact(v) : '·') + '</td>';
     });
     html += '</tr>';
   });
@@ -2110,7 +2467,7 @@ function renderMatrix(){
 
 function renderSeriesTable(t){
   const rows = SERIES.filter(s => state.series.has(s.id));
-  const single = !state.allYears;
+  const single = state.years.size === 1;
   const peak = {};
   rows.forEach(s => {
     let best = {y:null, v:-1};
@@ -2142,7 +2499,7 @@ function renderVictimSplit(t){
   if(state.series.has('explosions')) parts.push({name:'Explosions', d:t.explosions, k:'killed'});
   return '<table class="tbl"><thead><tr><th>Type</th><th>Civilians</th><th>Security</th><th>Militants</th><th>Total</th></tr></thead><tbody>' +
     parts.map(p => {
-      const rows = state.allYears ? periodRows() : [state.byYear[state.year]];
+      const rows = periodRows();
       const get = f => sum(rows, r => (r[ p.name==='Suicide attacks' ? 'suicide' : 'explosions' ][f]) || 0);
       return '<tr><td>' + p.name + '</td><td>' + num(get('killed_civ')) + '</td><td>' + num(get('killed_sf')) +
         '</td><td>' + num(get('killed_mil')) + '</td><td class="em">' + num(get('killed')) + '</td></tr>';
@@ -2158,7 +2515,7 @@ function renderDistrictTab(el){
       '<div class="sub">Click any district shape on the map, or start with the highest values.</div>' +
       '<div class="section"><div class="section-head"><h3>Highest now</h3><span class="sub">' + esc(shadeInfo().label) + '</span></div>' +
       '<table class="tbl"><tbody>' + ranked.map((x,i) =>
-        '<tr data-d="' + esc(x.p.name) + '" style="cursor:pointer"><td><span style="color:#4f6473;font-family:var(--mono);font-size:8px;margin-right:6px">' + String(i+1).padStart(2,'0') + '</span>' + esc(x.p.display) + '</td><td class="em">' + num(x.v) + '</td></tr>'
+        '<tr data-d="' + esc(x.p.name) + '" style="cursor:pointer"><td><span class="rank">' + String(i+1).padStart(2,'0') + '</span>' + esc(x.p.display) + '</td><td class="em">' + num(x.v) + '</td></tr>'
       ).join('') + '</tbody></table></div>';
     $$('#inspBody tr[data-d]').forEach(tr => tr.addEventListener('click', () => selectDistrict(tr.dataset.d)));
     return;
@@ -2172,16 +2529,16 @@ function renderDistrictTab(el){
   const series = satp ? districtSpark(state.district) : gtdSpark(state.district);
   el.innerHTML =
     '<div class="dist-head"><div class="dist-emblem">' + esc(p.display.slice(0,1)) + '</div><div>' +
-      '<div class="h2" style="font-size:19px">' + esc(p.display) + (FATA.has(state.district) ? '<span class="badge fata">FATA</span>' : '<span class="badge settled">Settled</span>') + '</div>' +
+      '<div class="h2" style="font-size:1.22rem">' + esc(p.display) + (FATA.has(state.district) ? '<span class="badge fata">FATA</span>' : '<span class="badge settled">Settled</span>') + '</div>' +
       '<div class="sub">' + esc(p.division) + ' Division · HQ ' + esc(p.hq) + ' · ' + num(Math.round(p.area_km2)) + ' km²</div></div></div>' +
     '<div class="kpi-grid">' +
-      '<div class="kpi"><div class="v">' + (satp ? num(satp.total) : '—') + '</div><div class="l">SATP killed · ' + (state.allYears?'2000–'+state.year:state.year) + '</div></div>' +
+      '<div class="kpi"><div class="v">' + (satp ? num(satp.total) : '—') + '</div><div class="l">SATP killed · ' + esc(selLabel()) + '</div></div>' +
       '<div class="kpi"><div class="v">' + (satp ? num(satp.incidents) : '—') + '</div><div class="l">SATP killing incidents</div></div>' +
-      '<div class="kpi"><div class="v">' + num(gtdN) + '</div><div class="l">GTD incidents · ' + (state.allYears?'2000–'+state.year:state.year) + '</div></div>' +
+      '<div class="kpi"><div class="v">' + num(gtdN) + '</div><div class="l">GTD incidents · ' + esc(selLabel()) + '</div></div>' +
       '<div class="kpi"><div class="v">' + num(gtdK) + '</div><div class="l">GTD fatalities</div></div>' +
     '</div>' +
     (satp ? '' : '<div class="section"><div class="empty">SATP publishes a yearly sheet for this district, but it has not been downloaded yet. Press <b>Sync SATP</b> with an internet connection to load all ' + (combined?'combined ':'') + 'district series.</div></div>') +
-    '<div class="section"><div class="section-head"><h3>' + (satp?'SATP fatalities by year':'GTD incidents by year') + '</h3><span class="sub">' + (state.allYears?'2000–'+state.year:state.year) + '</span></div>' +
+    '<div class="section"><div class="section-head"><h3>' + (satp?'SATP fatalities by year':'GTD incidents by year') + '</h3><span class="sub">' + esc(selLabel()) + '</span></div>' +
       '<div class="spark"><div class="cap">' + (satp?'people killed':'incidents') + '</div>' + series + '</div></div>' +
     (satp ? '<div class="section"><div class="section-head"><h3>Recent years</h3><span class="sub">SATP</span></div>' +
       '<table class="tbl"><thead><tr><th>Year</th><th>Incidents</th><th>Civilians</th><th>Security</th><th>Total</th></tr></thead><tbody>' +
@@ -2234,7 +2591,12 @@ function sparkSvg(vals, color){
   vals.forEach((v,i) => { d += (i?'L':'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); area += 'L' + x(i).toFixed(1) + ' ' + y(v).toFixed(1); });
   area += 'L' + x(vals.length-1) + ' ' + (H-pad) + ' Z';
   const cur = vals[state.year - 2000];
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img">' +
+  let bands = '';
+  YEARS.forEach((y,i) => {
+    if(!state.years.has(y)) return;
+    bands += '<rect x="' + (x(i) - (W/(vals.length-1))/2) + '" y="0" width="' + (W/(vals.length-1)) + '" height="' + H + '" fill="#0d6b3f" opacity=".07"/>';
+  });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img">' + bands +
     '<path d="' + area + '" fill="' + color + '22"/>' +
     '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.5"/>' +
     '<rect x="' + (x(state.year - 2000) - 2) + '" y="0" width="4" height="' + H + '" fill="' + color + '" opacity=".18"/>' +
@@ -2259,7 +2621,7 @@ function renderIncidentsTab(el){
       const c = CAT_BY_ID[i.cat] || CAT_BY_ID.other;
       el.innerHTML = '<button class="link" id="incBack" style="margin-bottom:8px">← all incidents</button>' +
         '<div class="kicker">' + esc(c.label) + '</div>' +
-        '<div class="h2" style="font-size:19px">' + esc(i.place || i.district) + '</div>' +
+        '<div class="h2" style="font-size:1.22rem">' + esc(i.place || i.district) + '</div>' +
         '<div class="sub">' + esc(fmtDate(i.date)) + ' · ' + esc(i.district) + ' District' + (FATA.has(i.district)?' · erstwhile FATA':'') + '</div>' +
         '<div class="kpi-grid" style="margin-top:10px"><div class="kpi"><div class="v">' + num(i.killed) + '</div><div class="l">killed</div></div>' +
         '<div class="kpi"><div class="v">' + num(i.injured) + '</div><div class="l">injured</div></div></div>' +
@@ -2285,8 +2647,8 @@ function renderIncidentsTab(el){
     return;
   }
   const list = filteredIncidents().slice().sort((a,b) => b.killed - a.killed || b.date.localeCompare(a.date)).slice(0, 120);
-  el.innerHTML = '<div class="kicker">Incident log</div><div class="h2" style="font-size:18px">' + (state.allYears ? 'GTD record' : state.year) + '</div>' +
-    '<div class="sub">' + num(filteredIncidents().length) + ' incidents in view' + (state.allYears?' · showing fatalities 5+, deadliest first':'') + '</div>' +
+  el.innerHTML = '<div class="kicker">Incident log</div><div class="h2" style="font-size:18px">' + esc(selLong()) + '</div>' +
+    '<div class="sub">' + num(filteredIncidents().length) + ' incidents in view' + (state.years.size>6?' · showing fatalities 5+, deadliest first':' · deadliest first') + '</div>' +
     '<input class="search" id="incSearch" placeholder="Search place, actor, summary…" value="' + esc(state.search) + '">' +
     '<div class="inc-list">' + (list.map(i => {
       const c = CAT_BY_ID[i.cat] || CAT_BY_ID.other;
@@ -2324,7 +2686,7 @@ function renderSourcesTab(el){
       '<tr><td>District series</td><td>' + Object.keys(state.satp.districts || {}).length + ' loaded</td></tr>' +
       '<tr><td>Update path</td><td>' + (state.server ? 'serve.py · live' : 'static copy') + '</td></tr>' +
     '</tbody></table>' +
-    (state.server ? '' : '<div class="note" style="margin-top:8px">This copy is being served as static files, so the in-app refresh cannot run. Start it with <code>python3 serve.py</code> to enable one-click SATP synchronisation.</div>') +
+    (state.server ? '' : '<div class="note" style="margin-top:.4rem">This copy is being served as static files, so the in-app refresh cannot run. Start it with <code>python3 serve.py</code> to enable one-click SATP synchronisation.</div>') +
     '</div>' +
     '<div class="section"><div class="section-head"><h3>Datasheets</h3><span class="sub">' + rows.length + '</span></div>' +
       rows.map(r => '<div class="src-item"><b>' + esc(r[0]) + '</b><a href="' + esc(r[1]) + '" target="_blank" rel="noopener">' + esc(r[1].replace(/^https?:\/\//,'').slice(0,58)) + ' ↗</a></div>').join('') +
@@ -2341,11 +2703,28 @@ function renderSourcesTab(el){
 }
 
 // ---------------------------------------------------------------- orchestration
+function syncSelectedPath(){
+  if(!dLayer || !dLayer.eachLayer) return;
+  dLayer.eachLayer(l => {
+    if(!l._path || !l.feature) return;
+    const on = l.feature.properties.name === state.district;
+    l._path.classList.toggle('district-selected', on);
+    if(on){
+      l._path.setAttribute('stroke', '#d92332');
+      l._path.setAttribute('stroke-width', '2');
+      l._path.setAttribute('stroke-opacity', '1');
+      if(l.bringToFront) l.bringToFront();
+    }
+  });
+}
+
 function render(){
   _breaks = null;
+  paintYearChrome();
   renderHeader();
   renderLegend();
   dLayer.setStyle(styleDistrict);
+  syncSelectedPath();
   renderLabels();
   buildPins();
   if(state.ov.heat) buildHeat();
@@ -2354,15 +2733,80 @@ function render(){
   updateHash();
 }
 
-function setYear(y, keepMode){
-  state.year = clamp(y, 2000, 2026);
-  if(!keepMode) state.allYears = false;
-  $('#yearRange').value = state.year;
-  $('#yearBig').textContent = state.year;
-  $('#yearSub').textContent = state.allYears ? 'cumulative · 2000–' + state.year : 'single year · ' + state.year;
-  $('#btnAllYears').setAttribute('aria-pressed', state.allYears ? 'true' : 'false');
-  document.body.classList.toggle('cumulative', state.allYears);
+function selectOnlyYear(y){
+  const v = clamp(Math.round(y), 2000, 2026);
+  state.years = new Set([v]);
+  state.spanMode = false;
+  state.spanEnd = v; state.year = v; state.lastYearClick = v;
   render();
+}
+
+function selectSpan(end){
+  const v = clamp(Math.round(end), 2000, 2026);
+  state.years = new Set(YEARS.filter(y => y <= v));
+  state.spanMode = true;
+  state.spanEnd = v; state.year = v; state.lastYearClick = v;
+  render();
+}
+
+function setYears(list){
+  const ys = Array.from(new Set(list.filter(y => y >= 2000 && y <= 2026))).sort((a,b)=>a-b);
+  if(!ys.length) return toast('Keep at least one year selected.');
+  state.years = new Set(ys);
+  state.spanMode = false;
+  state.year = ys[ys.length-1];
+  state.spanEnd = state.year;
+  render();
+}
+
+function toggleYear(y, shift){
+  y = clamp(Math.round(y), 2000, 2026);
+  if(!shift && state.years.size === YEARS.length){ return selectOnlyYear(y); }
+  if(shift){
+    const a = Math.min(state.lastYearClick, y), b = Math.max(state.lastYearClick, y);
+    state.years = new Set(YEARS.filter(v => v >= a && v <= b));
+    state.spanMode = false;
+  }else{
+    state.spanMode = false;
+    if(state.years.has(y)){
+      if(state.years.size === 1) return toast('Keep at least one year selected.');
+      state.years.delete(y);
+    }else{
+      state.years.add(y);
+    }
+  }
+  state.year = Math.max(...state.years);
+  state.spanEnd = state.year;
+  state.lastYearClick = y;
+  render();
+}
+
+function buildYearChips(){
+  const host = $('#yearChips');
+  if(!host) return;
+  host.innerHTML = YEARS.map(y =>
+    '<button type="button" class="ychip" data-y="' + y + '" aria-pressed="false" title="' + y + ' (shift-click for a range)">' + y + '</button>'
+  ).join('');
+  $$('#yearChips .ychip').forEach(b => b.addEventListener('click', e => toggleYear(+b.dataset.y, e.shiftKey)));
+}
+
+function paintYearChrome(){
+  const ys = selectedYears();
+  const chips = $$('#yearChips .ychip');
+  if(!chips.length) buildYearChips();
+  $$('#yearChips .ychip').forEach(b => {
+    const y = +b.dataset.y, on = state.years.has(y);
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+  $('#yearBig').textContent = selLabel();
+  $('#yearSub').textContent = (ys.length === 1 ? 'single year' : ys.length === YEARS.length ? 'all 27 years' : ys.length + ' of 27 years')
+    + (state.spanMode && ys.length > 1 && ys.length < YEARS.length ? ' · span' : '');
+  const r = $('#yearRange');
+  if(r) r.value = state.spanEnd;
+  const t = $('#tlSelected');
+  if(t) t.textContent = ys.length + '/27 years';
+  document.body.classList.toggle('cumulative', state.years.size > 1);
 }
 
 function selectDistrict(name){
@@ -2373,10 +2817,34 @@ function selectDistrict(name){
   map.fitBounds(L.geoJSON({type:'FeatureCollection', features:state.geoFeatures.filter(f => f.properties.name === name)}).getBounds(), {padding:[60,60], maxZoom:10});
 }
 
+function encodeYears(){
+  const ys = selectedYears();
+  if(ys.length === YEARS.length) return 'all';
+  const parts = [];
+  let i = 0;
+  while(i < ys.length){
+    let j = i;
+    while(j + 1 < ys.length && ys[j+1] === ys[j] + 1) j++;
+    parts.push(i === j ? String(ys[i]) : ys[i] + '-' + ys[j]);
+    i = j + 1;
+  }
+  return parts.join(',');
+}
+
+function decodeYears(str){
+  const out = [];
+  String(str || '').split(',').forEach(part => {
+    const m = part.match(/^(\d{4})-(\d{4})$/);
+    if(m){ for(let y = +m[1]; y <= +m[2]; y++) out.push(y); }
+    else if(/^\d{4}$/.test(part)) out.push(+part);
+  });
+  return out.filter(y => y >= 2000 && y <= 2026);
+}
+
 function updateHash(){
   clearTimeout(updateHash._t);
   updateHash._t = setTimeout(() => {
-    const p = ['y=' + state.year, 'all=' + (state.allYears?1:0), 'tab=' + state.tab];
+    const p = ['ys=' + encodeYears(), 'tab=' + state.tab, 'lay=' + state.layout, 'fs=' + state.fontScale.toFixed(2)];
     if(state.district) p.push('d=' + encodeURIComponent(state.district));
     try{ history.replaceState(null, '', '#' + p.join('&')); }
     catch(e){ try{ location.hash = p.join('&'); }catch(_){} }
@@ -2530,7 +2998,7 @@ function buildCatToggles(){
   const host = $('#catToggles');
   host.innerHTML = CATS.map(c => {
     const on = state.cats.has(c.id);
-    const n = state.incidentsLoaded ? state.incidents.filter(i => i.cat === c.id && (state.allYears ? i.year <= state.year : i.year === state.year)).length : '';
+    const n = state.incidentsLoaded ? state.incidents.filter(i => i.cat === c.id && state.years.has(i.year)).length : '';
     return '<button class="cat ' + (on?'on':'') + '" data-c="' + c.id + '" type="button" aria-pressed="' + on + '"><i style="background:' + c.color + '"></i>' + esc(c.label) + '<span class="n">' + n + '</span></button>';
   }).join('');
   $$('#catToggles .cat').forEach(b => b.addEventListener('click', () => {
@@ -2557,13 +3025,32 @@ function togglePlay(){
   state.playing = true;
   $('#btnPlay').textContent = '❚❚ Pause';
   let y = 2000;
-  state.allYears = false;
-  setYear(2000, true);
+  selectOnlyYear(2000);
   state.playTimer = setInterval(() => {
     y++;
     if(y > 2026){ clearInterval(state.playTimer); state.playing = false; $('#btnPlay').textContent = '▶ Play years'; return; }
-    setYear(y, true);
+    selectOnlyYear(y);
   }, 780);
+}
+
+// ---------------------------------------------------------------- export
+function download(name, text, type){
+  const a = document.createElement('a');
+  a.download = name;
+  if(window.URL && URL.createObjectURL && window.Blob){
+    const blob = new Blob([text], {type: type || 'text/plain;charset=utf-8'});
+    a.href = URL.createObjectURL(blob);
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }else{
+    a.href = 'data:' + (type || 'text/plain') + ';charset=utf-8,' + encodeURIComponent(text);
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
+function csvCell(v){
+  const t = String(v == null ? '' : v);
+  return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
 }
 
 function exportCsv(){
@@ -2571,26 +3058,251 @@ function exportCsv(){
     'major_incidents','major_killed','major_injured','suicide_attacks','suicide_killed','explosions','explosion_killed',
     'arrests','arrest_incidents','arms_recoveries','surrender_incidents','surrendered'];
   const rows = [head.join(',')];
-  YEARS.forEach(y => {
+  selectedYears().forEach(y => {
     const r = state.byYear[y];
     rows.push([y, r.incidents.incidents, r.fatalities.incidents, r.fatalities.total, r.fatalities.civilians, r.fatalities.security,
       r.fatalities.militants, r.fatalities.ns, r.major.incidents, r.major.killed, r.major.injured,
       r.suicide.incidents, r.suicide.killed, r.explosions.incidents, r.explosions.killed,
       r.arrests.arrested, r.arrests.incidents, r.arms.recoveries, r.surrender.incidents, r.surrender.surrendered].join(','));
   });
-  const text = rows.join('\n');
-  const a = document.createElement('a');
-  a.download = 'kp-satp-yearly-data.csv';
-  if(window.URL && URL.createObjectURL){
-    const blob = new Blob([text], {type:'text/csv;charset=utf-8'});
-    a.href = URL.createObjectURL(blob);
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
-  }else{
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(text);
-    a.click();
-  }
-  toast('Yearly SATP table downloaded.');
+  download('kp-satp-yearly-' + encodeYears().replace(/[,]/g,'_') + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
+  toast('Yearly SATP table downloaded · ' + selectedYears().length + ' years.');
+}
+
+function exportIncidentsCsv(){
+  if(!state.incidentsLoaded){ toast('The incident layer is still loading.'); return; }
+  const head = ['id','date','year','district','place','lat','lng','category','killed','injured','actor','target','summary'];
+  const rows = [head.join(',')];
+  filteredIncidents()
+    .slice().sort((a,b) => b.killed - a.killed || b.date.localeCompare(a.date))
+    .forEach(i => rows.push([i.id, i.date, i.year, i.district, i.place, i.lat, i.lng, (CAT_BY_ID[i.cat]||CAT_BY_ID.other).label,
+      i.killed, i.injured, i.actor, i.target, i.summary].map(csvCell).join(',')));
+  download('kp-incidents-' + encodeYears().replace(/[,]/g,'_') + '.csv', rows.join('\n'), 'text/csv;charset=utf-8');
+  toast(rows.length - 1 + ' incidents downloaded.');
+}
+
+function exportJson(){
+  const t = periodTotals();
+  const view = {
+    generated: new Date().toISOString(),
+    source: state.satp.source,
+    as_of: state.satp.as_of,
+    selection: { years: selectedYears(), label: selLong() },
+    layout: state.layout,
+    filters: {
+      series: Array.from(state.series), categories: Array.from(state.cats),
+      min_fatalities: state.minKilled, shade: state.shade, district: state.district
+    },
+    totals: t,
+    districts: state.districts
+      .map(p => ({ name: p.name, display: p.display, fata: FATA.has(p.name), value: districtValue(p.name) }))
+      .filter(d => d.value != null)
+      .sort((a,b) => b.value - a.value)
+  };
+  download('kp-atlas-view.json', JSON.stringify(view, null, 2), 'application/json;charset=utf-8');
+  toast('Current view downloaded as JSON.');
+}
+
+function exportSvg(){
+  const svg = $('#tlChart svg');
+  if(!svg || state.tlCollapsed){ toast('Show the timeline first, then export its chart.'); return; }
+  const clone = svg.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const vb = (svg.getAttribute('viewBox') || '0 0 900 140').split(/\s+/).map(Number);
+  clone.setAttribute('width', String(vb[2] || 900));
+  clone.setAttribute('height', String(vb[3] || 140));
+  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  style.textContent = '.tl-axis{font:10px Candara,Segoe UI,sans-serif;fill:#7f978a}' +
+    '.tl-grid{stroke:#e2ecdf;stroke-width:1}.tl-bar{fill:#bfe0ca}.tl-bar.on{fill:#2f8f5b}' +
+    '.tl-focus{fill:rgba(255,207,51,.22);stroke:rgba(224,180,27,.55)}';
+  clone.insertBefore(style, clone.firstChild);
+  const text = new XMLSerializer().serializeToString(clone);
+  download('kp-atlas-timeline.svg', text, 'image/svg+xml;charset=utf-8');
+  toast('Timeline exported as SVG.');
+}
+
+function copyLink(){
+  const url = location.href;
+  const fallback = () => {
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand && document.execCommand('copy');
+      ta.remove();
+      toast('Link copied — it restores these years, this district and this layout.');
+    }catch(e){ toast('Copy failed. The address bar already holds the shareable link.'); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(
+      () => toast('Link copied — it restores these years, this district and this layout.'),
+      fallback
+    );
+  }else fallback();
+}
+
+function runExport(action){
+  if(action === 'csv') exportCsv();
+  else if(action === 'incidents') exportIncidentsCsv();
+  else if(action === 'json') exportJson();
+  else if(action === 'svg') exportSvg();
+  else if(action === 'print') window.print();
+  else if(action === 'link') copyLink();
+}
+
+// ---------------------------------------------------------------- layout & type
+function applyLayout(v){
+  const allowed = ['full','wide','focus','maponly'];
+  state.layout = allowed.includes(v) ? v : 'full';
+  document.body.classList.remove('layout-full','layout-wide','layout-focus','layout-maponly');
+  document.body.classList.add('layout-' + state.layout);
+  const sel = $('#layoutSel');
+  if(sel) sel.value = state.layout;
+  try{ localStorage.setItem('kp-layout', state.layout); }catch(e){}
+  setTimeout(() => { if(typeof map !== 'undefined' && map) map.invalidateSize(); renderTimeline(); }, 90);
+}
+
+const FONT_STEPS = [0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.45];
+function applyFont(scale){
+  state.fontScale = clamp(Number(scale) || 1, FONT_STEPS[0], FONT_STEPS[FONT_STEPS.length-1]);
+  document.documentElement.style.setProperty('--ui', state.fontScale.toFixed(3));
+  document.documentElement.style.fontSize = (16 * state.fontScale).toFixed(2) + 'px';
+  const val = $('#fsVal');
+  if(val) val.textContent = Math.round(state.fontScale * 100) + '%';
+  try{ localStorage.setItem('kp-font', String(state.fontScale)); }catch(e){}
+  setTimeout(() => { if(typeof map !== 'undefined' && map) map.invalidateSize(); renderTimeline(); }, 90);
+}
+
+function stepFont(dir){
+  const cur = state.fontScale;
+  let idx = FONT_STEPS.findIndex(v => Math.abs(v - cur) < 0.001);
+  if(idx < 0) idx = FONT_STEPS.reduce((best,v,i) => Math.abs(v-cur) < Math.abs(FONT_STEPS[best]-cur) ? i : best, 0);
+  const next = FONT_STEPS[clamp(idx + dir, 0, FONT_STEPS.length - 1)];
+  if(Math.abs(next - cur) < 0.001) return toast(dir > 0 ? 'Largest text size.' : 'Smallest text size.');
+  applyFont(next);
+}
+
+// ---------------------------------------------------------------- overlays
+function applyOverlays(){
+  const ids = {districts:'ovDistricts', borders:'ovBorders', fata:'ovFata', pins:'ovPins', heat:'ovHeat', neighbours:'ovNeighbours'};
+  Object.entries(ids).forEach(([key,id]) => { const el = $('#' + id); if(el) el.checked = !!state.ov[key]; });
+  if(dLayer){ state.ov.districts ? dLayer.addTo(map) : map.removeLayer(dLayer); }
+  if(fataLayer){ state.ov.fata ? fataLayer.addTo(map) : map.removeLayer(fataLayer); }
+  if(neighbourLayer){ state.ov.neighbours ? neighbourLayer.addTo(map) : map.removeLayer(neighbourLayer); }
+  buildPins();
+  buildHeat();
+  renderLabels();
+  $$('.layer').forEach(l => { const i = l.querySelector('input'); l.classList.toggle('on', !!(i && i.checked)); });
+  const n = Object.values(state.ov).filter(Boolean).length;
+  $('#overlayCount').textContent = n + ' on';
+  renderLegend();
+}
+
+function setAllLayers(on){
+  Object.keys(state.ov).forEach(k => { state.ov[k] = on; });
+  applyOverlays();
+  toast(on ? 'All six layers on.' : 'Panel layers off — basemap only.');
+}
+
+// ---------------------------------------------------------------- controls
+function bindControls(){
+  buildYearChips();
+
+  $('#yearRange').addEventListener('input', e => selectSpan(+e.target.value));
+  $('#yrPrev').addEventListener('click', () => {
+    if(state.spanMode && state.years.size > 1) selectSpan(state.spanEnd - 1);
+    else selectOnlyYear(state.year - 1);
+  });
+  $('#yrNext').addEventListener('click', () => {
+    if(state.spanMode && state.years.size > 1) selectSpan(state.spanEnd + 1);
+    else selectOnlyYear(state.year + 1);
+  });
+  $('#btnYearsAll').addEventListener('click', () => {
+    state.years = new Set(YEARS); state.spanMode = true; state.spanEnd = 2026; state.year = 2026; state.lastYearClick = 2026;
+    render();
+    toast('All 27 years selected.');
+  });
+  $('#btnYearsClear').addEventListener('click', () => selectOnlyYear(Math.max(...state.years)));
+  $('#btnLatest').addEventListener('click', () => selectOnlyYear(2026));
+  $('#btnLast5').addEventListener('click', () => setYears(YEARS.slice(-5)));
+  $('#btnPlay').addEventListener('click', togglePlay);
+
+  const ovMap = {ovDistricts:'districts', ovBorders:'borders', ovFata:'fata', ovPins:'pins', ovHeat:'heat', ovNeighbours:'neighbours'};
+  Object.entries(ovMap).forEach(([id, key]) => {
+    const el = $('#' + id);
+    el.addEventListener('change', () => { state.ov[key] = el.checked; applyOverlays(); });
+  });
+  applyOverlays();
+  $('#btnLayersAll').addEventListener('click', () => setAllLayers(true));
+  $('#btnLayersMap').addEventListener('click', () => setAllLayers(false));
+
+  $('#shadeMetric').addEventListener('change', e => { state.shade = e.target.value; render(); });
+  $('#basemap').addEventListener('change', e => setBasemap(e.target.value));
+
+  $('#btnAllSeries').addEventListener('click', () => {
+    if(state.series.size === SERIES.length) state.series = new Set(['fatalities','incidents','major','suicide']);
+    else state.series = new Set(SERIES.map(s => s.id));
+    buildSeriesToggles(); render();
+  });
+  $('#btnAllCats').addEventListener('click', toggleAllCats);
+  $$('#sevRow button').forEach(b => b.addEventListener('click', () => {
+    $$('#sevRow button').forEach(x => x.classList.toggle('active', x === b));
+    state.minKilled = +b.dataset.min;
+    buildPins();
+  }));
+  $$('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
+
+  $('#btnSync').addEventListener('click', syncNow);
+  $('#syncChip').addEventListener('click', () => { if(!state.server) setTab('sources'); });
+  $('#btnAbout').addEventListener('click', () => { renderAbout(); $('#aboutModal').hidden = false; });
+  $$('#aboutModal [data-close]').forEach(b => b.addEventListener('click', () => { $('#aboutModal').hidden = true; }));
+
+  // export menu
+  const menu = $('#exportMenu');
+  $('#btnExport').addEventListener('click', e => {
+    e.stopPropagation();
+    menu.hidden = !menu.hidden;
+    $('#btnExport').setAttribute('aria-expanded', String(!menu.hidden));
+  });
+  $$('#exportMenu [data-export]').forEach(b => b.addEventListener('click', () => {
+    menu.hidden = true;
+    $('#btnExport').setAttribute('aria-expanded', 'false');
+    runExport(b.dataset.export);
+  }));
+  document.addEventListener('click', e => {
+    if(!menu.hidden && !menu.contains(e.target) && e.target !== $('#btnExport')) menu.hidden = true;
+  });
+
+  // layout + type
+  $('#layoutSel').addEventListener('change', e => { applyLayout(e.target.value); toast('Layout: ' + e.target.options[e.target.selectedIndex].text.replace('Layout · ','')); });
+  $('#btnExitMapOnly').addEventListener('click', () => applyLayout('full'));
+  $('#fsDown').addEventListener('click', () => stepFont(-1));
+  $('#fsUp').addEventListener('click', () => stepFont(1));
+
+  $('#tlToggle').addEventListener('click', () => {
+    state.tlCollapsed = !state.tlCollapsed;
+    $('#timeline').classList.toggle('collapsed', state.tlCollapsed);
+    $('#tlToggle').textContent = state.tlCollapsed ? 'Show' : 'Hide';
+    $('#tlToggle').setAttribute('aria-expanded', String(!state.tlCollapsed));
+    renderTimeline();
+  });
+  $('#tlLabels').addEventListener('change', e => { state.tlLabels = e.target.checked; renderTimeline(); });
+
+  $('#btnMobileRail').addEventListener('click', () => document.body.classList.toggle('rail-open'));
+  $('#btnMobileInsp').addEventListener('click', () => document.body.classList.toggle('insp-open'));
+  $('#btnCloseInsp').addEventListener('click', () => document.body.classList.remove('insp-open'));
+  $('#scrim').addEventListener('click', () => document.body.classList.remove('rail-open','insp-open'));
+
+  window.addEventListener('resize', debounce(() => { renderTimeline(); renderLabels(); }, 160));
+  window.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){ $('#aboutModal').hidden = true; menu.hidden = true; document.body.classList.remove('insp-open','rail-open'); }
+    if(e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if(e.key === 'ArrowLeft'){ e.preventDefault(); $('#yrPrev').click(); }
+    if(e.key === 'ArrowRight'){ e.preventDefault(); $('#yrNext').click(); }
+    if(e.key.toLowerCase() === 'm'){ e.preventDefault(); applyLayout(state.layout === 'maponly' ? 'full' : 'maponly'); }
+  });
+
+  setInterval(checkStatus, 60000);
 }
 
 function renderAbout(){
@@ -2621,75 +3333,10 @@ function renderAbout(){
     '</ul>' +
     '<h3>Basemaps</h3>' +
     '<p>The “Google Maps” options draw Google tile imagery directly in Leaflet (the <code>mt0–mt3.google.com/vt</code> tile service). That is the familiar Google cartography, but it is not the paid Google Maps JavaScript API, so it carries no key quota and can be rate-limited; if tiles fail the atlas switches itself to OpenStreetMap. The offline edition ships a drawn vector basemap (district outlines, province boundary, neighbours, graticule and labels) because imagery cannot be embedded.</p>' +
-    '<h3>Controls</h3>' +
-    '<p>Every overlay, every SATP series and every incident category can be switched on or off. Choose a single year or the cumulative span, play the years, click a district for its record, or click any cell of the year matrix. The layout is a fixed grid — the rail, legend, map, timeline and inspector each own their space, so no panel ever covers a figure.</p>';
-}
-
-function bindControls(){
-  $('#yearRange').addEventListener('input', e => setYear(+e.target.value, true));
-  $('#yrPrev').addEventListener('click', () => setYear(state.year - 1, true));
-  $('#yrNext').addEventListener('click', () => setYear(state.year + 1, true));
-  $('#btnAllYears').addEventListener('click', () => { state.allYears = !state.allYears; setYear(state.year, true); });
-  $('#btnLatest').addEventListener('click', () => setYear(2026, false));
-  $('#btnPlay').addEventListener('click', togglePlay);
-
-  const ovMap = {ovDistricts:'districts', ovBorders:'borders', ovFata:'fata', ovPins:'pins', ovHeat:'heat', ovNeighbours:'neighbours'};
-  Object.entries(ovMap).forEach(([id, key]) => {
-    const el = $('#' + id);
-    el.addEventListener('change', () => {
-      state.ov[key] = el.checked;
-      if(key === 'districts'){ el.checked ? dLayer.addTo(map) : map.removeLayer(dLayer); }
-      if(key === 'fata'){ if(fataLayer){ el.checked ? fataLayer.addTo(map) : map.removeLayer(fataLayer); } }
-      if(key === 'neighbours'){ if(neighbourLayer){ el.checked ? neighbourLayer.addTo(map) : map.removeLayer(neighbourLayer); } }
-      if(key === 'pins') buildPins();
-      if(key === 'heat') buildHeat();
-      if(key === 'borders') renderLabels();
-      $('#overlayCount').textContent = Object.values(state.ov).filter(Boolean).length + ' on';
-      renderLegend();
-    });
-  });
-  $('#overlayCount').textContent = Object.values(state.ov).filter(Boolean).length + ' on';
-
-  $('#shadeMetric').addEventListener('change', e => { state.shade = e.target.value; render(); });
-  $('#basemap').addEventListener('change', e => setBasemap(e.target.value));
-  $('#btnAllSeries').addEventListener('click', () => {
-    if(state.series.size === SERIES.length) state.series = new Set(['fatalities','incidents','major','suicide']);
-    else state.series = new Set(SERIES.map(s => s.id));
-    buildSeriesToggles(); render();
-  });
-  $('#btnAllCats').addEventListener('click', toggleAllCats);
-  $$('#sevRow button').forEach(b => b.addEventListener('click', () => {
-    $$('#sevRow button').forEach(x => x.classList.toggle('active', x === b));
-    state.minKilled = +b.dataset.min;
-    buildPins();
-  }));
-  $$('.tab').forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
-
-  $('#btnSync').addEventListener('click', syncNow);
-  $('#syncChip').addEventListener('click', () => { if(!state.server) setTab('sources'); });
-  $('#btnExport').addEventListener('click', exportCsv);
-  $('#btnAbout').addEventListener('click', () => { renderAbout(); $('#aboutModal').hidden = false; });
-  $$('#aboutModal [data-close]').forEach(b => b.addEventListener('click', () => { $('#aboutModal').hidden = true; }));
-  document.addEventListener('keydown', e => { if(e.key === 'Escape'){ $('#aboutModal').hidden = true; document.body.classList.remove('insp-open','rail-open'); } });
-
-  $('#tlToggle').addEventListener('click', () => {
-    state.tlCollapsed = !state.tlCollapsed;
-    $('#timeline').classList.toggle('collapsed', state.tlCollapsed);
-    $('#tlToggle').textContent = state.tlCollapsed ? 'Show' : 'Hide';
-    $('#tlToggle').setAttribute('aria-expanded', String(!state.tlCollapsed));
-    renderTimeline();
-  });
-  $('#tlLabels').addEventListener('change', e => { state.tlLabels = e.target.checked; renderTimeline(); });
-
-  $('#btnMobileRail').addEventListener('click', () => document.body.classList.toggle('rail-open'));
-  $('#btnMobileInsp').addEventListener('click', () => document.body.classList.toggle('insp-open'));
-  $('#btnCloseInsp').addEventListener('click', () => document.body.classList.remove('insp-open'));
-  $('#scrim').addEventListener('click', () => document.body.classList.remove('rail-open','insp-open'));
-
-  window.addEventListener('resize', debounce(() => { renderTimeline(); renderLabels(); }, 160));
-  window.addEventListener('hashchange', () => { /* keep it lightweight: no full re-read */ });
-
-  setInterval(checkStatus, 60000);
+    '<h3>Years, layers and layouts</h3>' +
+    '<p>The year grid is a multi-select: click any years to add or remove them, shift-click to take a range, or drag the slider for a span from 2000. Every figure, shade, matrix cell and timeline bar follows the selection, and selected years are marked in yellow. The six map layers are independent switches; <b>All layers</b> and <b>Map only</b> set them in one go. Four layouts are available — full, map + filters, map + details, and map only, which hides every panel except the map. Text size is adjustable from 80% to 145% with A− / A+, and the whole interface is set in Candara. Export offers the yearly table, the visible incidents, the current view as JSON, the timeline as SVG, a print/PDF pass and a share link.</p>' +
+    '<h3>Selection</h3>' +
+    '<p>A district you click is outlined in red at 2 px and brought to the front so its record stays visible against its neighbours.</p>';
 }
 
 // ---------------------------------------------------------------- boot
@@ -2726,14 +3373,30 @@ async function boot(){
 
     // restore a shared view
     const q = new URLSearchParams((location.hash || '').slice(1));
-    const y = +q.get('y');
-    if(y >= 2000 && y <= 2026) state.year = y;
-    if(q.get('all') === '0') state.allYears = false;
+    const ys = q.get('ys');
+    const hashYears = ys === 'all' ? YEARS.slice() : (ys ? decodeYears(ys) : []);
+    if(hashYears.length){
+      state.years = new Set(hashYears);
+      state.spanEnd = Math.max(...hashYears);
+      state.year = state.spanEnd;
+      state.lastYearClick = state.year;
+      state.spanMode = isContiguous();
+    }
     if(q.get('d') && state.districtByName[q.get('d')]) state.district = q.get('d');
     if(q.get('tab')) state.tab = q.get('tab');
     $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === state.tab));
 
-    setYear(state.year, true);
+    let savedFont = 1, savedLayout = 'full';
+    try{
+      savedFont = parseFloat(localStorage.getItem('kp-font')) || 1;
+      savedLayout = localStorage.getItem('kp-layout') || 'full';
+    }catch(e){}
+    if(q.get('fs')) savedFont = parseFloat(q.get('fs')) || savedFont;
+    if(q.get('lay')) savedLayout = q.get('lay');
+    applyFont(savedFont);
+    applyLayout(savedLayout);
+
+    render();
     if(state.district) selectDistrict(state.district);
 
     // load the optional incident layer after first paint
@@ -2741,7 +3404,7 @@ async function boot(){
     checkStatus();
   }catch(err){
     console.error(err);
-    $('#map').innerHTML = '<div style="padding:40px;color:#c9d7e2;font:13px/1.7 system-ui;max-width:520px">' +
+    $('#map').innerHTML = '<div style="padding:2.5rem;color:#2b4635;font:.8rem/1.7 Candara,Segoe UI,sans-serif;max-width:32rem">' +
       '<b>Could not load the atlas data.</b><br>Serve this folder over HTTP — <code>python3 serve.py</code> — or open the single-file offline edition.</div>';
   }
 }
