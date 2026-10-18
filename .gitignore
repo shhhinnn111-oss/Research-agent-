@@ -1,4 +1,24 @@
-node_modules/
+# Python-generated files
 __pycache__/
-*.pyc
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Environment variables
+.env
+
+# Output files
+output/
+
+# Binaries
+tectonic.exe
+
+# Node / local tooling
+node_modules/
+package-lock.json
 .DS_Store
